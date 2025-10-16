@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "nodemon": "3.1.10",
+    "picocolors": "1.1.1"
+  },
+  "name": "app_finanzas_personales",
+  "version": "1.0.0",
+  "description": "Gestión datos app",
+  "main": "index.mjs",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrew9798/Finanzas_Personales.git"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "data"
+  ],
+  "author": "Andrés Escámez Ganga - AndresDev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrew9798/Finanzas_Personales/issues"
+  },
+  "homepage": "https://github.com/andrew9798/Finanzas_Personales#readme"
+}

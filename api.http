@@ -1,0 +1,16 @@
+### Recuperar información de los ingresos
+GET http://localhost:1234/ingresos
+
+### Recuperar información de los gastos
+GET http://localhost:1234/gastos
+
+
+### Para crear un ingreso
+POST http://localhost:1234/ingresos
+Content-Type: application/json
+
+{
+  "cantidad": 500,
+  "descripcion": "Venta de bicicleta",
+  "fecha": "2024-06-15"
+}

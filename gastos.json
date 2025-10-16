@@ -1,0 +1,23 @@
+[
+    {
+      "id": 1,
+      "concepto": "Compra en supermercado",
+      "cantidad": 50.75,
+      "categoria": "Alimentación",
+      "fecha": "2024-06-01"
+    },
+    {
+      "id": 2,
+      "concepto": "Pago de transporte",
+      "cantidad": 15.00,
+      "categoria": "Transporte",
+      "fecha": "2024-06-02"
+    },
+    {
+      "id": 3,
+      "concepto": "Cena en restaurante",
+      "cantidad": 30.20,
+      "categoria": "Ocio",
+      "fecha": "2024-06-03"
+    }
+  ]
