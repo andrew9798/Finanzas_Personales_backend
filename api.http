@@ -1,6 +1,9 @@
 ### Recuperar información de los ingresos
 GET http://localhost:1234/ingresos
 
+### recuperar informacion de los ingresos por mes y año
+GET http://localhost:1234/ingresos/2024/7
+
 ### Recuperar información de los gastos
 GET http://localhost:1234/gastos
 
