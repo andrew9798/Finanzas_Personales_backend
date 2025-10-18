@@ -2,18 +2,60 @@
 GET http://localhost:1234/ingresos
 
 ### recuperar informacion de los ingresos por mes y año
-GET http://localhost:1234/ingresos/2024/7
-
-### Recuperar información de los gastos
-GET http://localhost:1234/gastos
-
+GET http://localhost:1234/ingresos/2024/8
 
 ### Para crear un ingreso
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {
+  "id": 1,
+  "concepto": "Venta",
   "cantidad": 500,
   "descripcion": "Venta de bicicleta",
-  "fecha": "2024-06-15"
+  "fecha": "2024-07-15"
 }
+
+
+### actualizar un ingreso
+PUT http://localhost:1234/ingresos/1
+Content-Type: application/json
+
+{ 
+  "id": 1,
+  "concepto": "Venta",
+  "cantidad": 600,
+  "descripcion": "Venta de bicicleta",
+  "fecha": "2024-08-15"
+}
+
+### eliminar un ingreso
+DELETE http://localhost:1234/ingresos/1 
+
+
+### Recuperar información de los gastos
+GET http://localhost:1234/gastos
+
+### Para crear un gasto
+POST http://localhost:1234/gastos
+Content-Type: application/json
+
+{
+  "cantidad": 300,
+  "descripcion": "Compra de materiales",
+  "fecha": "2024-06-15"
+} 
+
+### actualizar un gasto
+PUT http://localhost:1234/gastos/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "cantidad": 350,
+  "descripcion": "Compra de materiales",
+  "fecha": "2024-06-15"
+} 
+
+### eliminar un gasto
+DELETE http://localhost:1234/gastos/1

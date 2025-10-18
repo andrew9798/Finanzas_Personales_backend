@@ -3,21 +3,21 @@
       "id": 1,
       "concepto": "Salario Mensual",
       "cantidad": 3000,
-      "categoria": "Salario",
+      "categoria": "Trabajo",
       "fecha": "2024-06-01"
     },
     {
       "id": 2,
       "concepto": "Venta de Artículos Usados",
       "cantidad": 150,
-      "categoria": "Ventas",
+      "categoria": "Inversiones",
       "fecha": "2024-06-05"
     },
     {
       "id": 3,
       "concepto": "Ingreso por Freelance",
       "cantidad": 600,
-      "categoria": "Freelance",
+      "categoria": "Trabajo",
       "fecha": "2024-06-10"
     }
   ]
