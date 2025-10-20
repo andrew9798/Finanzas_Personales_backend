@@ -166,7 +166,9 @@ app.delete('/gastos/:id', (req, res) => {
   }
 });
 
+const PORT = process.env.PORT || 3000;
+
 // ⭐ INICIA EL SERVIDOR CON EXPRESS DIRECTAMENTE
-app.listen(1234, () => {
-  console.log('Servidor corriendo en http://localhost:1234')
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`)
 })
