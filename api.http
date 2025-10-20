@@ -10,9 +10,9 @@ Content-Type: application/json
 
 {
   "id": 1,
-  "concepto": "Venta",
+  "concepto": "inversion",
   "cantidad": 500,
-  "descripcion": "Venta de bicicleta",
+  "categoria": "salario",
   "fecha": "2024-07-15"
 }
 
@@ -23,9 +23,9 @@ Content-Type: application/json
 
 { 
   "id": 1,
-  "concepto": "Venta",
+  "concepto": "Venta de bicicleta",
   "cantidad": 600,
-  "descripcion": "Venta de bicicleta",
+  "categoria": "inversion",
   "fecha": "2024-08-15"
 }
 
@@ -42,7 +42,7 @@ Content-Type: application/json
 
 {
   "cantidad": 300,
-  "descripcion": "Compra de materiales",
+  "categoria": "Compra de materiales",
   "fecha": "2024-06-15"
 } 
 
@@ -53,7 +53,7 @@ Content-Type: application/json
 {
   "id": 1,
   "cantidad": 350,
-  "descripcion": "Compra de materiales",
+  "categoria": "Compra de materiales",
   "fecha": "2024-06-15"
 } 
 
