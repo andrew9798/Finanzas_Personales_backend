@@ -7,8 +7,8 @@ import ingresos from './data/ingresos.json' assert { type: 'json' };
 import gastos from './data/gastos.json' assert { type: 'json' };
 
 // ⭐ ACTUALIZAR IMPORTS - Importar las funciones y categorías correctas
-import { 
-  validateIngreso, 
+import {
+  validateIngreso,
   validateGasto,
   categoriasIngresos,
   categoriasGastos
@@ -38,6 +38,8 @@ app.get('/categorias/gastos', (req, res) => {
   res.status(200).json(categoriasGastos);
 });
 
+
+
 //Endpoint para obtener todos los ingresos
 app.get('/ingresos', (req, res) => {
   res.status(200).json(ingresos);
@@ -63,11 +65,11 @@ app.post('/ingresos', (req, res) => {
 
   if (result.error) {
     //quiero una respuesta que me de los errores de validacion
-  return res.status(400).json({ errors: result.error.issues });
+    return res.status(400).json({ errors: result.error.issues });
   }
 
   const ingreso = result.data;
-  const nuevoIngreso = ingreso;
+  const nuevoIngreso = { ...ingreso, id: crypto.randomUUID() };
   ingresos.push(nuevoIngreso);
   res.status(201).json(nuevoIngreso);
 });
@@ -76,11 +78,11 @@ app.post('/ingresos', (req, res) => {
 app.put('/ingresos/:id', (req, res) => {
   const { id } = req.params;
   console.log(`id recibido: ${id}`);
-const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
+  const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
 
   if (ingresoIndex !== -1) {
     const result = validateIngreso(req.body);  // ⭐ Validar también en PUT
-    
+
     if (result.error) {
       return res.status(400).json({ errors: result.error.issues });
     }
@@ -96,8 +98,8 @@ const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // �
 //Endpoint eliminar un ingreso
 app.delete('/ingresos/:id', (req, res) => {
   const { id } = req.params;
-const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
-  
+  const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
+
   if (ingresoIndex !== -1) {
     ingresos.splice(ingresoIndex, 1);
     res.status(204).send();
@@ -113,7 +115,7 @@ app.get('/gastos', (req, res) => {
 
 // Endpoint para obtener gastos filtrados por mes y año
 app.get('/gastos/:anyo/:mes', (req, res) => {
-  const { anyo, mes } = req.params; 
+  const { anyo, mes } = req.params;
 
   if (mes && anyo) {
     const gastosFiltrados = gastos.filter(gasto => {
@@ -124,32 +126,33 @@ app.get('/gastos/:anyo/:mes', (req, res) => {
   } else {
     res.status(404).json({ error: 'Parámetros mes y año no han sido encontrados' });
   }
-}); 
+});
 
-// ⭐ ACTUALIZADO - Endpoint para crear un nuevo gasto
+// ⭐ CREAR - Endpoint para crear un nuevo gasto
 app.post('/gastos', (req, res) => {
   const result = validateGasto(req.body);  // ⭐ Agregar validación
 
   if (result.error) {
-  return res.status(400).json({ errors: result.error.issues });
+    return res.status(400).json({ errors: result.error.issues });
   }
 
   const gasto = result.data;
-  const nuevoGasto = gasto;
+  //crear id con un randomUUID
+  const nuevoGasto = { ...gasto, id: crypto.randomUUID() };
   gastos.push(nuevoGasto);
   res.status(201).json(nuevoGasto);
-}); 
+});
 
 //Endpoint actualizar un gasto
 app.put('/gastos/:id', (req, res) => {
   const { id } = req.params;
-  const gastoIndex = _findIndex(g => g.id === id);  // ⭐ Quitado parseInt
+  const gastoIndex = gastos.findIndex(g => String(g.id) === String(id)); // ⭐ Quitado parseInt
 
   if (gastoIndex !== -1) {
     const result = validateGasto(req.body);  // ⭐ Validar también en PUT
-    
+
     if (result.error) {
-      return res.status(400).json({ errors: result.error.errors });
+      return res.status(400).json({ errors: result.error.issues });
     }
 
     const updatedGasto = { ...gastos[gastoIndex], ...result.data };
@@ -162,11 +165,10 @@ app.put('/gastos/:id', (req, res) => {
 
 //Endpoint eliminar un gasto
 app.delete('/gastos/:id', (req, res) => {
-  const { id } = req.params;  
-  const gastoIndex = _findIndex(g => g.id === id);  // ⭐ Quitado parseInt
-
+  const { id } = req.params;
+  const gastoIndex = gastos.findIndex(g => String(g.id) === String(id)); // ⭐ Quitado parseInt 
   if (gastoIndex !== -1) {
-    _splice(gastoIndex, 1);
+    gastos.splice(gastoIndex, 1);
     res.status(204).send();
   } else {
     res.status(404).json({ error: 'Gasto no encontrado' });

@@ -1,14 +1,19 @@
-### Recuperar información de los ingresos         Funciona
+
+######################## GASTOS ################################
+
+
+### Recuperar información de los ingresos         //Funciona
 GET http://localhost:1234/ingresos
 
-### recuperar informacion de los ingresos por mes y año     Funciona
+### recuperar informacion de los ingresos por mes y año     //Funciona
 GET http://localhost:1234/ingresos/2024/7
 
-### Para crear un ingreso     Funciona
+### Para crear un ingreso     //Funciona
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {
+
   "concepto": "inversion",
   "cantidad": 500,
   "categoria": "salario",
@@ -16,51 +21,54 @@ Content-Type: application/json
 }
 
 
-### actualizar un ingreso   Funciona
-PUT http://localhost:1234/ingresos/1
+### actualizar un ingreso   //Funciona
+PUT http://localhost:1234/ingresos/2c2dd36b-2291-4b0e-b6bb-1b91406db441
 Content-Type: application/json
 
 { 
-  "id": 6,
-  "concepto": "Venta de bicicleta",
+
+  "concepto": "Venta de bicicleta actualizacion",
   "cantidad": 600,
   "categoria": "inversion",
   "fecha": "2024-08-15"
 }
 
-### eliminar un ingreso  Funciona
+### eliminar un ingreso  //Funciona
 DELETE http://localhost:1234/ingresos/1 
 
 
-### Recuperar información de los gastos      Funciona
+######################## INGRESOS ################################
+
+
+### Recuperar información de los gastos      //Funciona
 GET http://localhost:1234/gastos
 
-### recuperar informacion de los gastos por mes y año    Funciona
+### recuperar informacion de los gastos por mes y año    //Funciona
 GET http://localhost:1234/gastos/2024/7
 
 
-### Para crear un gasto   Funciona
+### Para crear un gasto   //Funciona
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
   {
-    "id": 1,
-    "concepto": "Cambio de los datos",
+    "id": 99,
+    "concepto": "nuevo gasto",
     "cantidad": 50.75,
     "categoria": "alimentacion",
     "fecha": "2024-06-01"
   }
 
-### actualizar un gasto
+### actualizar un gasto   //Funciona
 PUT http://localhost:1234/gastos/1
 Content-Type: application/json
 
 {
-  "id": 1,
-  "cantidad": 350,
-  "categoria": "Compra de materiales",
-  "fecha": "2024-06-15"
+    "concepto": "actualizar datos",
+    "cantidad": 50.75,
+    "categoria": "alimentacion",
+    "fecha": "2024-06-01"
 } 
 
-### eliminar un gasto
+### eliminar un gasto   //Funciona
 DELETE http://localhost:1234/gastos/1
