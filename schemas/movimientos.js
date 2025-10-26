@@ -1,11 +1,11 @@
 import { z } from 'zod';  // ⭐ IMPORTANTE: con llaves {}
 
 // Definir las categorías
-const categoriasIngresos = ['salario', 'venta', 'inversion', 'regalos', 'bizum', 'otros'];
-const categoriasGastos = ['alimentacion', 'transporte', 'vivienda', 'ocio', 'salud', 'educacion', 'inversion', 'otros'];    
+export const categoriasIngresos = ['salario', 'venta', 'inversion', 'regalos', 'bizum', 'otros'];
+export const categoriasGastos = ['alimentacion', 'transporte', 'vivienda', 'ocio', 'salud', 'educacion', 'inversion', 'otros'];
 
 // Función para validar tipo de categoría
-function validarCategoria(categoria) {
+export function validarCategoria(categoria) {
   if (categoriasIngresos.includes(categoria)) {
     return 'ingreso';
   } else if (categoriasGastos.includes(categoria)) {
@@ -45,19 +45,10 @@ const gastosSchema = z.object({
 }); 
 
 // ⭐ FUNCIONES DE VALIDACIÓN SEPARADAS
-function validateIngreso(object) {
+export function validateIngreso(object) {
   return ingresosSchema.safeParse(object);
 }
 
-function validateGasto(object) {
+export function validateGasto(object) {
   return gastosSchema.safeParse(object);
 }
-
-// ⭐ EXPORTAR TODO con NAMED EXPORTS (sin default)
-export {
-  validateIngreso,
-  validateGasto,
-  validarCategoria,
-  categoriasIngresos,
-  categoriasGastos
-};

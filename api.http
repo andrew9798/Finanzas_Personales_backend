@@ -1,10 +1,10 @@
-### Recuperar información de los ingresos
+### Recuperar información de los ingresos         Funciona
 GET http://localhost:1234/ingresos
 
-### recuperar informacion de los ingresos por mes y año
-GET http://localhost:1234/ingresos/2024/8
+### recuperar informacion de los ingresos por mes y año     Funciona
+GET http://localhost:1234/ingresos/2024/7
 
-### Para crear un ingreso
+### Para crear un ingreso     Funciona
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
