@@ -77,8 +77,7 @@ app.post('/ingresos', (req, res) => {
 app.put('/ingresos/:id', (req, res) => {
   const { id } = req.params;
   console.log(`id recibido: ${id}`);
-  const ingresoIndex = ingresos.findIndex(i => i.id === id);  // ⭐ Quitado parseInt si usas UUID
-  console.log(`ingresoIndex: ${ingresoIndex}`);
+const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
 
   if (ingresoIndex !== -1) {
     const result = validateIngreso(req.body);  // ⭐ Validar también en PUT
