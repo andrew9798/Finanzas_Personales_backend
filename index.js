@@ -67,8 +67,7 @@ app.post('/ingresos', (req, res) => {
   }
 
   const ingreso = result.data;
-  const id = randomUUID();
-  const nuevoIngreso = { ...ingreso, id };
+  const nuevoIngreso = ingreso;
   ingresos.push(nuevoIngreso);
   res.status(201).json(nuevoIngreso);
 });
@@ -117,7 +116,7 @@ app.get('/gastos/:anyo/:mes', (req, res) => {
   const { anyo, mes } = req.params; 
 
   if (mes && anyo) {
-    const gastosFiltrados = _filter(gasto => {
+    const gastosFiltrados = gastos.filter(gasto => {
       const fecha = new Date(gasto.fecha);
       return fecha.getMonth() + 1 === parseInt(mes) && fecha.getFullYear() === parseInt(anyo);
     });
@@ -132,13 +131,12 @@ app.post('/gastos', (req, res) => {
   const result = validateGasto(req.body);  // ⭐ Agregar validación
 
   if (result.error) {
-    return res.status(400).json({ errors: result.error.errors });
+  return res.status(400).json({ errors: result.error.issues });
   }
 
   const gasto = result.data;
-  const id = randomUUID();
-  const nuevoGasto = { ...gasto, id };
-  _push(nuevoGasto);
+  const nuevoGasto = gasto;
+  gastos.push(nuevoGasto);
   res.status(201).json(nuevoGasto);
 }); 
 

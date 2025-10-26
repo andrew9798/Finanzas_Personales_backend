@@ -32,18 +32,24 @@ Content-Type: application/json
 DELETE http://localhost:1234/ingresos/1 
 
 
-### Recuperar información de los gastos
+### Recuperar información de los gastos      Funciona
 GET http://localhost:1234/gastos
 
-### Para crear un gasto
+### recuperar informacion de los gastos por mes y año    Funciona
+GET http://localhost:1234/gastos/2024/7
+
+
+### Para crear un gasto   Funciona
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
-{
-  "cantidad": 300,
-  "categoria": "Compra de materiales",
-  "fecha": "2024-06-15"
-} 
+  {
+    "id": 1,
+    "concepto": "Cambio de los datos",
+    "cantidad": 50.75,
+    "categoria": "alimentacion",
+    "fecha": "2024-06-01"
+  }
 
 ### actualizar un gasto
 PUT http://localhost:1234/gastos/1
