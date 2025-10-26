@@ -9,7 +9,6 @@ POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {
-  "id": 1,
   "concepto": "inversion",
   "cantidad": 500,
   "categoria": "salario",
@@ -17,19 +16,19 @@ Content-Type: application/json
 }
 
 
-### actualizar un ingreso
+### actualizar un ingreso   Funciona
 PUT http://localhost:1234/ingresos/1
 Content-Type: application/json
 
 { 
-  "id": 1,
+  "id": 6,
   "concepto": "Venta de bicicleta",
   "cantidad": 600,
   "categoria": "inversion",
   "fecha": "2024-08-15"
 }
 
-### eliminar un ingreso
+### eliminar un ingreso  Funciona
 DELETE http://localhost:1234/ingresos/1 
 
 

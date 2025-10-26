@@ -97,10 +97,10 @@ const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // �
 //Endpoint eliminar un ingreso
 app.delete('/ingresos/:id', (req, res) => {
   const { id } = req.params;
-  const ingresoIndex = ingresos.findIndex(i => i.id === id);  // ⭐ Quitado parseInt
+const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
   
   if (ingresoIndex !== -1) {
-    splice(ingresoIndex, 1);
+    ingresos.splice(ingresoIndex, 1);
     res.status(204).send();
   } else {
     res.status(404).json({ error: 'Ingreso no encontrado' });
