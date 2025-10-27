@@ -7,18 +7,8 @@ import { corsMiddleware } from './middelwares/cors.js';
 // Middlewares
 app.use(corsMiddleware);
 app.use(json());
-import { gastoRouter } from './routes/gastos.js';
-import { ingresoRouter } from './routes/ingresos.js';
-import ingresos from './data/ingresos.json' with { type: 'json' };
-import gastos from './data/gastos.json' with { type: 'json' };
-
-// ⭐ ACTUALIZAR IMPORTS - Importar las funciones y categorías correctas
-import {
-  validateIngreso,
-  validateGasto,
-  categoriasIngresos,
-  categoriasGastos
-} from './schemas/movimientos.js';
+import { gastoRouter } from './routes/routeGastos.js';
+import { ingresoRouter } from './routes/routeIngresos.js';
 
 // Deshabilitar la cabecera 'X-Powered-By' por seguridad
 app.disable('x-powered-by');

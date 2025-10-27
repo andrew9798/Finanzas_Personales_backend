@@ -1,5 +1,5 @@
-import { Router } from "express";   
-
+import { Router } from "express";  
+import * as gastosModel from '../models/gastosModel.js'; 
 import gastos from '../data/gastos.json' with { type: 'json' };
 import { validateGasto } from '../schemas/movimientos.js';
 import { randomUUID } from 'node:crypto';
@@ -7,17 +7,15 @@ import { randomUUID } from 'node:crypto';
 export const gastoRouter = Router();
 
 // Endpoint para obtener todos los gastos
-gastoRouter.get('/', (req, res) => {
+gastoRouter.get('/', async (req, res) => {
+  const gastos = await gastosModel.getAll();
   res.status(200).json(gastos);
 });     
 // Endpoint para obtener gastos filtrados por mes y año
-gastoRouter.get('/:anyo/:mes', (req, res) => {
+gastoRouter.get('/:anyo/:mes', async (req, res) => {
   const { anyo, mes } = req.params;
-    if (mes && anyo) {
-    const gastosFiltrados = gastos.filter(gasto => {
-      const fecha = new Date(gasto.fecha);
-      return fecha.getMonth() + 1 === parseInt(mes) && fecha.getFullYear() === parseInt(anyo);
-    });
+  if (mes && anyo) {
+    const gastosFiltrados = await gastosModel.getByMonthYear(anyo, mes);
     res.status(200).json(gastosFiltrados);
   } else {
     res.status(404).json({ error: 'Parámetros mes y año no han sido encontrados' });
@@ -25,7 +23,7 @@ gastoRouter.get('/:anyo/:mes', (req, res) => {
 });
 
 // Endpoint para agregar un nuevo gasto
-gastoRouter.post('/', (req, res) => {
+gastoRouter.post('/', async (req, res) => {
   const result = validateGasto(req.body);  // Validar el gasto
   if (result.error) {
     return res.status(400).json({ errors: result.error.issues });
@@ -33,34 +31,27 @@ gastoRouter.post('/', (req, res) => {
   const gasto = result.data;
   // Crear id con un randomUUID
   const nuevoGasto = { ...gasto, id: randomUUID() };
-  gastos.push(nuevoGasto);
+  await gastosModel.create(nuevoGasto);
   res.status(201).json(nuevoGasto);
 });
 
 // Endpoint para actualizar un gasto existente
-gastoRouter.put('/:id', (req, res) => {
+gastoRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const gastoIndex = gastos.findIndex(g => String(g.id) === String(id)); // Usar String para comparar
-
-  if (gastoIndex !== -1) {
-    const result = validateGasto(req.body);  // Validar también en PUT
-
-    if (result.error) {
-      return res.status(400).json({ errors: result.error.issues });
-    }
-
-    const updatedGasto = { ...gastos[gastoIndex], ...result.data };
-    gastos[gastoIndex] = updatedGasto;
-    res.status(200).json(updatedGasto);
-  } else {
-    res.status(404).json({ error: 'Gasto no encontrado' });
+  const result = validateGasto(req.body);  // Validar también en PUT
+  if (result.error) {
+    return res.status(400).json({ errors: result.error.issues });
   }
+  const updatedGasto = { ...gastos[gastoIndex], ...result.data };
+  await gastosModel.update(id, updatedGasto);
+  res.status(200).json(updatedGasto);
 });
 
 // Endpoint para eliminar un gasto
-gastoRouter.delete('/:id', (req, res) => {
+gastoRouter.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const gastoIndex = gastos.findIndex(g => String(g.id) === String(id)); // Usar String para comparar   
+  await gastosModel.delete(id);
+  res.status(200).json({ message: 'Gasto eliminado correctamente' });
   if (gastoIndex !== -1) {
     gastos.splice(gastoIndex, 1);
     res.status(200).json({ message: 'Gasto eliminado correctamente' });
