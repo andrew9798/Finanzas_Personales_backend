@@ -1,8 +1,12 @@
 import express, { json } from 'express';
-import cors from 'cors';
 import { randomUUID } from 'crypto';
 const app = express();
 
+import { corsMiddleware } from './middelwares/cors.js';
+
+// Middlewares
+app.use(corsMiddleware);
+app.use(json());
 import { gastoRouter } from './routes/gastos.js';
 import { ingresoRouter } from './routes/ingresos.js';
 import ingresos from './data/ingresos.json' with { type: 'json' };
@@ -19,13 +23,7 @@ import {
 // Deshabilitar la cabecera 'X-Powered-By' por seguridad
 app.disable('x-powered-by');
 
-// ⭐ MIDDLEWARES - EN ESTE ORDEN
-app.use(json());
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type']
-}));
+
 
 // ⭐ RUTAS
 app.use('/gastos', gastoRouter);
