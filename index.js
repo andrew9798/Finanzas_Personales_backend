@@ -1,7 +1,6 @@
 import express, { json } from 'express';
 import { randomUUID } from 'crypto';
 const app = express();
-
 import { corsMiddleware } from './middelwares/cors.js';
 
 // Middlewares
