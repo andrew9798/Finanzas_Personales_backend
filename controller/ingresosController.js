@@ -1,7 +1,7 @@
 import ingresosModel from '../models/ingresosModel.js';
 import { randomUUID } from 'node:crypto';
 
-export class ingresosController {   
+export default class ingresosController {   
     // Aquí podrían ir métodos relacionados con la lógica de negocio de ingresos
     static async getAllIngresos(req, res) {
         const ingresos = await ingresosModel.getAll();

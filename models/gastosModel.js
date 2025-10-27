@@ -1,7 +1,7 @@
 import gastosData from '../data/gastos.json' with { type: 'json' };
 const gastos = gastosData;
 
-export class gastosModel {
+export default class gastosModel {
 
     // Endpoint para obtener todos los gastos
     static async getAll() {

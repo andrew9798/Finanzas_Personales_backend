@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import  gastosModel  from '../models/gastosModel.js';
 
-export class gastosController {
+export default class gastosController {
     // Aquí podrían ir métodos relacionados con la lógica de negocio de gastos
     static async getAllGastos(req, res) {
         const gastos = await gastosModel.getAll();

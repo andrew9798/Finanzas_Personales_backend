@@ -7,8 +7,8 @@ import { corsMiddleware } from './middelwares/cors.js';
 // Middlewares
 app.use(corsMiddleware);
 app.use(json());
-import { gastoRouter } from './routes/routeGastos.js';
-import { ingresoRouter } from './routes/routeIngresos.js';
+import { gastoRouter } from './routes/gastosRouter.js';
+import { ingresoRouter } from './routes/ingresosRouter.js';
 
 // Deshabilitar la cabecera 'X-Powered-By' por seguridad
 app.disable('x-powered-by');
