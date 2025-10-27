@@ -3,8 +3,10 @@ import cors from 'cors';
 import { randomUUID } from 'crypto';
 const app = express();
 
-import ingresos from './data/ingresos.json' assert { type: 'json' };
-import gastos from './data/gastos.json' assert { type: 'json' };
+import { gastoRouter } from './routes/gastos.js';
+import { ingresoRouter } from './routes/ingresos.js';
+import ingresos from './data/ingresos.json' with { type: 'json' };
+import gastos from './data/gastos.json' with { type: 'json' };
 
 // ⭐ ACTUALIZAR IMPORTS - Importar las funciones y categorías correctas
 import {
@@ -25,155 +27,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type']
 }));
 
+// ⭐ RUTAS
+app.use('/gastos', gastoRouter);
+app.use('/ingresos', ingresoRouter);  
 
-
-
-
-// ⭐ NUEVOS ENDPOINTS PARA OBTENER CATEGORÍAS
-app.get('/categorias/ingresos', (req, res) => {
-  res.status(200).json(categoriasIngresos);
-});
-
-app.get('/categorias/gastos', (req, res) => {
-  res.status(200).json(categoriasGastos);
-});
-
-
-
-//Endpoint para obtener todos los ingresos
-app.get('/ingresos', (req, res) => {
-  res.status(200).json(ingresos);
-});
-
-// Endpoint para obtener ingresos filtrados por mes y año
-app.get('/ingresos/:anyo/:mes', (req, res) => {
-  const { anyo, mes } = req.params;
-  if (mes && anyo) {
-    const ingresosFiltrados = ingresos.filter(ingreso => {
-      const fecha = new Date(ingreso.fecha);
-      return fecha.getMonth() + 1 === parseInt(mes) && fecha.getFullYear() === parseInt(anyo);
-    });
-    res.status(200).json(ingresosFiltrados);
-  } else {
-    res.status(404).json({ error: 'Parámetros mes y año no han sido encontrados' });
-  }
-});
-
-// ⭐ ACTUALIZADO - Endpoint para crear un nuevo ingreso
-app.post('/ingresos', (req, res) => {
-  const result = validateIngreso(req.body);  // ⭐ Cambiado a validateIngreso
-
-  if (result.error) {
-    //quiero una respuesta que me de los errores de validacion
-    return res.status(400).json({ errors: result.error.issues });
-  }
-
-  const ingreso = result.data;
-  const nuevoIngreso = { ...ingreso, id: crypto.randomUUID() };
-  ingresos.push(nuevoIngreso);
-  res.status(201).json(nuevoIngreso);
-});
-
-//Endpoint actualizar un ingreso
-app.put('/ingresos/:id', (req, res) => {
-  const { id } = req.params;
-  console.log(`id recibido: ${id}`);
-  const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
-
-  if (ingresoIndex !== -1) {
-    const result = validateIngreso(req.body);  // ⭐ Validar también en PUT
-
-    if (result.error) {
-      return res.status(400).json({ errors: result.error.issues });
-    }
-
-    const updatedIngreso = { ...ingresos[ingresoIndex], ...result.data };
-    ingresos[ingresoIndex] = updatedIngreso;
-    res.status(200).json(updatedIngreso);
-  } else {
-    res.status(404).json({ error: 'Ingreso no encontrado' });
-  }
-});
-
-//Endpoint eliminar un ingreso
-app.delete('/ingresos/:id', (req, res) => {
-  const { id } = req.params;
-  const ingresoIndex = ingresos.findIndex(i => String(i.id) === String(id)); // ⭐ Quitado parseInt 
-
-  if (ingresoIndex !== -1) {
-    ingresos.splice(ingresoIndex, 1);
-    res.status(204).send();
-  } else {
-    res.status(404).json({ error: 'Ingreso no encontrado' });
-  }
-});
-
-//Endpoint para obtener todos los gastos
-app.get('/gastos', (req, res) => {
-  res.status(200).json(gastos);
-});
-
-// Endpoint para obtener gastos filtrados por mes y año
-app.get('/gastos/:anyo/:mes', (req, res) => {
-  const { anyo, mes } = req.params;
-
-  if (mes && anyo) {
-    const gastosFiltrados = gastos.filter(gasto => {
-      const fecha = new Date(gasto.fecha);
-      return fecha.getMonth() + 1 === parseInt(mes) && fecha.getFullYear() === parseInt(anyo);
-    });
-    res.status(200).json(gastosFiltrados);
-  } else {
-    res.status(404).json({ error: 'Parámetros mes y año no han sido encontrados' });
-  }
-});
-
-// ⭐ CREAR - Endpoint para crear un nuevo gasto
-app.post('/gastos', (req, res) => {
-  const result = validateGasto(req.body);  // ⭐ Agregar validación
-
-  if (result.error) {
-    return res.status(400).json({ errors: result.error.issues });
-  }
-
-  const gasto = result.data;
-  //crear id con un randomUUID
-  const nuevoGasto = { ...gasto, id: crypto.randomUUID() };
-  gastos.push(nuevoGasto);
-  res.status(201).json(nuevoGasto);
-});
-
-//Endpoint actualizar un gasto
-app.put('/gastos/:id', (req, res) => {
-  const { id } = req.params;
-  const gastoIndex = gastos.findIndex(g => String(g.id) === String(id)); // ⭐ Quitado parseInt
-
-  if (gastoIndex !== -1) {
-    const result = validateGasto(req.body);  // ⭐ Validar también en PUT
-
-    if (result.error) {
-      return res.status(400).json({ errors: result.error.issues });
-    }
-
-    const updatedGasto = { ...gastos[gastoIndex], ...result.data };
-    gastos[gastoIndex] = updatedGasto;
-    res.status(200).json(updatedGasto);
-  } else {
-    res.status(404).json({ error: 'Gasto no encontrado' });
-  }
-});
-
-//Endpoint eliminar un gasto
-app.delete('/gastos/:id', (req, res) => {
-  const { id } = req.params;
-  const gastoIndex = gastos.findIndex(g => String(g.id) === String(id)); // ⭐ Quitado parseInt 
-  if (gastoIndex !== -1) {
-    gastos.splice(gastoIndex, 1);
-    res.status(204).send();
-  } else {
-    res.status(404).json({ error: 'Gasto no encontrado' });
-  }
-});
 
 const PORT = process.env.PORT || 1234;
 
