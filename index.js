@@ -8,6 +8,8 @@ app.use(corsMiddleware);
 app.use(json());
 import { gastoRouter } from './routes/gastosRouter.js';
 import { ingresoRouter } from './routes/ingresosRouter.js';
+import { crearRouterTransacciones } from './routes/transaccionesRouter.js';
+
 
 // Deshabilitar la cabecera 'X-Powered-By' por seguridad
 app.disable('x-powered-by');
@@ -15,8 +17,8 @@ app.disable('x-powered-by');
 
 
 // ⭐ RUTAS
-app.use('/gastos', gastoRouter);
-app.use('/ingresos', ingresoRouter);  
+app.use('/ingresos', crearRouterTransacciones('ingreso'));
+app.use('/gastos', crearRouterTransacciones('gasto')); 
 
 
 const PORT = process.env.PORT || 1234;
