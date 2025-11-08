@@ -35,7 +35,7 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### eliminar un ingreso  //Funciona
+### eliminar un ingreso  //Funciona //Funciona
 DELETE http://localhost:1234/ingresos/1 
 
 
@@ -73,5 +73,5 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### eliminar un gasto   //Funciona
-DELETE http://localhost:1234/gastos/1
+### eliminar un gasto   //Funciona  //funciona 
+DELETE http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
