@@ -46,6 +46,27 @@ export default class TransaccionesModel {
         return rows;
     }
 
+    // ✅ Obtener UNA transacción por ID 
+    static async getById(id) {
+        const [rows] = await connection.query(
+            `SELECT 
+                BIN_TO_UUID(t.id) AS id,
+                BIN_TO_UUID(t.id_usuario) AS id_usuario,
+                t.tipo, 
+                t.concepto, 
+                t.cantidad, 
+                t.id_categoria,
+                c.nombre AS categoria,
+                t.fecha
+            FROM transacciones t
+            LEFT JOIN categorias c ON t.id_categoria = c.id
+            WHERE t.id = UUID_TO_BIN(?)`,
+            [id]
+        );
+        
+        return rows.length > 0 ? rows[0] : null;
+    }
+
     // Método para buscar id_categoria por nombre
 static async getCategoriaIdByNombre(nombre, tipo) {
     const [rows] = await connection.query(
@@ -70,19 +91,35 @@ static async getCategoriaIdByNombre(nombre, tipo) {
     }
 
     // ✅ Actualizar transacción
-    static async update(id, data) {
-        // Generar dinámicamente los campos a actualizar
-        const fields = Object.keys(data)
+static async update(id, data) {
+        // Lista blanca de columnas permitidas (SEGURIDAD)
+        const columnasPermitidas = ['concepto', 'cantidad', 'id_categoria', 'fecha'];
+        
+        // Filtrar solo campos válidos
+        const datosValidos = {};
+        for (const [key, value] of Object.entries(data)) {
+            if (columnasPermitidas.includes(key)) {
+                datosValidos[key] = value;
+            }
+        }
+        
+        // Si no hay nada que actualizar
+        if (Object.keys(datosValidos).length === 0) {
+            throw new Error('No hay campos válidos para actualizar');
+        }
+        
+        // Generar query dinámicamente solo con campos válidos
+        const fields = Object.keys(datosValidos)
             .map(key => `${key} = ?`)
             .join(', ');
-        const values = Object.values(data);
+        const values = Object.values(datosValidos);
 
         await connection.query(
             `UPDATE transacciones SET ${fields} WHERE id = UUID_TO_BIN(?)`,
             [...values, id]
         );
 
-        return { id, ...data };
+        return { id, ...datosValidos };
     }
 
     // ✅ Eliminar transacción

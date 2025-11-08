@@ -15,22 +15,24 @@ Content-Type: application/json
 {
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "concepto": "Venta de bicicleta",
+  "tipo": "gasto",
   "cantidad": 1300,
   "categoria": "venta",
   "fecha": "2024-07-15"
 }
 
 
-### actualizar un ingreso   //Funciona
-PUT http://localhost:1234/ingresos/2c2dd36b-2291-4b0e-b6bb-1b91406db441
+### actualizar un ingreso   //Funciona //Funciona
+PUT http://localhost:1234/ingresos/b7503c15-4632-4591-a367-a1209cd8d077
 Content-Type: application/json
 
-{ 
-
-  "concepto": "Venta de bicicleta actualizacion",
-  "cantidad": 600,
-  "categoria": "inversion",
-  "fecha": "2024-08-15"
+{
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "concepto": "Venta de colchones",
+  "tipo": "gasto",
+  "cantidad": 1300,
+  "categoria": "salario",
+  "fecha": "2024-07-15"
 }
 
 ### eliminar un ingreso  //Funciona
@@ -40,35 +42,36 @@ DELETE http://localhost:1234/ingresos/1
 ######################## INGRESOS ################################
 
 
-### Recuperar información de los gastos      //Funciona
+### Recuperar información de los gastos      //Funciona //Funciona
 GET http://localhost:1234/gastos
 
-### recuperar informacion de los gastos por mes y año    //Funciona
+### recuperar informacion de los gastos por mes y año    //Funciona //Funciona
 GET http://localhost:1234/gastos/2024/7
 
 
-### Para crear un gasto   //Funciona
+### Para crear un gasto   //Funciona  //funciona
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
-  {
-    "id": 99,
-    "concepto": "nuevo gasto",
-    "cantidad": 50.75,
-    "categoria": "alimentacion",
-    "fecha": "2024-06-01"
-  }
+{
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "concepto": "viaje italia",
+  "cantidad": 1300,
+  "categoria": "Ocio",
+  "fecha": "2024-07-15"
+}
 
-### actualizar un gasto   //Funciona
-PUT http://localhost:1234/gastos/1
+### actualizar un gasto   //Funciona  //Funciona
+PUT http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
 Content-Type: application/json
 
 {
-    "concepto": "actualizar datos",
-    "cantidad": 50.75,
-    "categoria": "alimentacion",
-    "fecha": "2024-06-01"
-} 
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "concepto": "viaje francia",
+  "cantidad": 1300,
+  "categoria": "Ocio",
+  "fecha": "2024-07-15"
+}
 
 ### eliminar un gasto   //Funciona
 DELETE http://localhost:1234/gastos/1
