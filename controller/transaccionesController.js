@@ -16,13 +16,44 @@ export default class TransaccionesController {
     res.status(200).json(transacciones);
   }
 
-  static async create(req, res) {
-    const tipo = req.tipo;
-    const transaccionData = req.body;
-    const nuevaTransaccion = { ...transaccionData, id: randomUUID(), tipo };
-    await TransaccionesModel.create(nuevaTransaccion);
-    res.status(201).json(nuevaTransaccion);
-  }
+static async create(req, res) {
+    try {
+        const tipo = req.tipo;
+        const transaccionData = req.body;
+        const { categoria, ...restData } = transaccionData; // Separar categoría del resto
+        
+        // 1. Buscar el id_categoria si se envió una categoría
+        let id_categoria = null;
+        if (categoria) {
+            id_categoria = await TransaccionesModel.getCategoriaIdByNombre(categoria, tipo);
+            
+            if (!id_categoria) {
+                return res.status(400).json({ 
+                    error: `La categoría "${categoria}" no existe para tipo "${tipo}"` 
+                });
+            }
+        }
+        
+        // 2. Crear la transacción con el id_categoria
+        const nuevaTransaccion = { 
+            ...restData, 
+            id: randomUUID(), 
+            tipo,
+            id_categoria  // Agregar el id_categoria encontrado
+        };
+        
+        await TransaccionesModel.create(nuevaTransaccion);
+        
+        // 3. Opcional: devolver con el nombre de la categoría en lugar del id
+        res.status(201).json({
+            ...nuevaTransaccion,
+            categoria  // Mantener el nombre para la respuesta
+        });
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
   static async update(req, res) {
     const { id } = req.params;

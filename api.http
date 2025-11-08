@@ -2,21 +2,21 @@
 ######################## GASTOS ################################
 
 
-### Recuperar información de los ingresos         //Funciona
+### Recuperar información de los ingresos         //Funciona  //Funciona  
 GET http://localhost:1234/ingresos
 
-### recuperar informacion de los ingresos por mes y año     //Funciona
-GET http://localhost:1234/ingresos/2024/7
+### recuperar informacion de los ingresos por mes y año     //Funciona  //Funciona
+GET http://localhost:1234/ingresos/2024/6
 
-### Para crear un ingreso     //Funciona
+### Para crear un ingreso     //Funciona  //Funciona
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {
-
-  "concepto": "inversion",
-  "cantidad": 500,
-  "categoria": "salario",
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "concepto": "Venta de bicicleta",
+  "cantidad": 1300,
+  "categoria": "venta",
   "fecha": "2024-07-15"
 }
 
