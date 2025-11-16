@@ -20,8 +20,11 @@ export default class TransaccionesModel {
    LEFT JOIN categorias c ON t.id_categoria = c.id
    WHERE t.tipo = ?`,
             [tipo]
-        );
-        return rows;
+           );
+        return rows.map(row => ({
+        ...row,
+        cantidad: parseFloat(row.cantidad)
+    }));
     }
 
     // ✅ Filtrar por mes y año
@@ -43,29 +46,37 @@ export default class TransaccionesModel {
        AND MONTH(fecha) = ?`,
             [tipo, anyo, mes]
         );
-        return rows;
+        return rows.map(row => ({
+        ...row,
+        cantidad: parseFloat(row.cantidad)
+    }));
     }
 
-    // ✅ Obtener UNA transacción por ID 
-    static async getById(id) {
-        const [rows] = await connection.query(
-            `SELECT 
-                BIN_TO_UUID(t.id) AS id,
-                BIN_TO_UUID(t.id_usuario) AS id_usuario,
-                t.tipo, 
-                t.concepto, 
-                t.cantidad, 
-                t.id_categoria,
-                c.nombre AS categoria,
-                t.fecha
-            FROM transacciones t
-            LEFT JOIN categorias c ON t.id_categoria = c.id
-            WHERE t.id = UUID_TO_BIN(?)`,
-            [id]
-        );
-        
-        return rows.length > 0 ? rows[0] : null;
-    }
+static async getById(id) {
+  const [rows] = await connection.query(
+    `SELECT 
+        BIN_TO_UUID(t.id) AS id,
+        BIN_TO_UUID(t.id_usuario) AS id_usuario,
+        t.tipo, 
+        t.concepto, 
+        t.cantidad, 
+        t.id_categoria,
+        c.nombre AS categoria,
+        t.fecha
+      FROM transacciones t
+      LEFT JOIN categorias c ON t.id_categoria = c.id
+      WHERE t.id = UUID_TO_BIN(?)`,
+    [id]
+  );
+  
+  if (rows.length === 0) return null;
+  
+  // ✅ Crear una copia del objeto y convertir cantidad a número
+  const transaccion = { ...rows[0] };
+  transaccion.cantidad = parseFloat(transaccion.cantidad);
+  
+  return transaccion;
+}
 
     // Método para buscar id_categoria por nombre
 static async getCategoriaIdByNombre(nombre, tipo) {
@@ -74,7 +85,13 @@ static async getCategoriaIdByNombre(nombre, tipo) {
         [nombre, tipo]
     );
     
-    return rows.length > 0 ? rows[0].id : null;
+      if (rows.length === 0) return null;
+  
+  // ✅ Crear una copia del objeto y convertir cantidad a número
+  const transaccion = { ...rows[0] };
+  transaccion.cantidad = parseFloat(transaccion.cantidad);
+  
+  return transaccion.id;
 }
 
     // ✅ Crear nueva transacción
