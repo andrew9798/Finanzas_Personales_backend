@@ -77,4 +77,4 @@ Content-Type: application/json
 DELETE http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
 
 ### Recuperar categorías de ingresos   //Funciona  //Funciona
-GET http://localhost:1234/categorias/ingresos
+GET http://localhost:1234/categorias/gasto

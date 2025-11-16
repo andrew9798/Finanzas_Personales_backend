@@ -85,13 +85,7 @@ static async getCategoriaIdByNombre(nombre, tipo) {
         [nombre, tipo]
     );
     
-      if (rows.length === 0) return null;
-  
-  // ✅ Crear una copia del objeto y convertir cantidad a número
-  const transaccion = { ...rows[0] };
-  transaccion.cantidad = parseFloat(transaccion.cantidad);
-  
-  return transaccion.id;
+    return rows.length > 0 ? rows[0].id : null;
 }
 
     // ✅ Crear nueva transacción
