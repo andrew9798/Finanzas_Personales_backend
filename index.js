@@ -9,6 +9,7 @@ app.use(json());
 import { gastoRouter } from './routes/gastosRouter.js';
 import { ingresoRouter } from './routes/ingresosRouter.js';
 import { crearRouterTransacciones } from './routes/transaccionesRouter.js';
+import { categoriasRouter } from './routes/categoriasRouter.js';
 
 
 // Deshabilitar la cabecera 'X-Powered-By' por seguridad
@@ -19,6 +20,7 @@ app.disable('x-powered-by');
 // ⭐ RUTAS
 app.use('/ingresos', crearRouterTransacciones('ingreso'));
 app.use('/gastos', crearRouterTransacciones('gasto')); 
+app.use('/categorias', categoriasRouter);
 
 
 const PORT = process.env.PORT || 1234;
