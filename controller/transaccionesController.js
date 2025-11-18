@@ -27,6 +27,7 @@ export default class TransaccionesController {
     static async create(req, res) {
         try {
             const tipo = req.tipo;
+            const id_usuario = "54046b1e-b8be-11f0-bdfa-e0d55e61010f"; // Valor fijo para pruebas
             const transaccionData = req.body;
             const { categoria, ...restData } = transaccionData;
             
@@ -36,6 +37,7 @@ export default class TransaccionesController {
                 id_categoria = await TransaccionesModel.getCategoriaIdByNombre(categoria, tipo);
                 
                 if (!id_categoria) {
+                    console.log("aqui esta el error");
                     return res.status(400).json({ 
                         error: `La categoría "${categoria}" no existe para tipo "${tipo}"` 
                     });
@@ -47,7 +49,8 @@ export default class TransaccionesController {
                 ...restData, 
                 id: randomUUID(), 
                 tipo,
-                id_categoria
+                id_categoria,
+                id_usuario
             };
             
             await TransaccionesModel.create(nuevaTransaccion);

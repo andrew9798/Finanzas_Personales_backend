@@ -76,5 +76,8 @@ Content-Type: application/json
 ### eliminar un gasto   //Funciona  //funciona 
 DELETE http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
 
-### Recuperar categorías de ingresos   //Funciona  //Funciona
+### Recuperar categorías de gasto   //Funciona  //Funciona
 GET http://localhost:1234/categorias/gasto
+
+### Recuperar categorías de ingreso   //Funciona  //Funciona
+GET http://localhost:1234/categorias/ingreso
