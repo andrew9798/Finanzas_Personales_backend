@@ -68,8 +68,10 @@ export default class TransaccionesController {
 
     static async update(req, res) {
         try {
+            console.log("datos de entrada", req.body);
             const { id } = req.params;
-            const tipo = req.tipo;
+            const tipo = req.params.body;
+           
             const { categoria, ...restData } = req.body;
             
             // 1. Verificar que la transacción existe
@@ -81,7 +83,9 @@ export default class TransaccionesController {
             
             // 2. Si viene 'categoria' (nombre), convertirlo a id_categoria
             let datosParaActualizar = { ...restData };
+            console.log("datos para actualizar", datosParaActualizar);
             
+
             if (categoria) {
                 const id_categoria = await TransaccionesModel.getCategoriaIdByNombre(
                     categoria, 
@@ -95,6 +99,7 @@ export default class TransaccionesController {
                 }
                 
                 datosParaActualizar.id_categoria = id_categoria;
+                console.log("datos actualizados", datosParaActualizar);
             }
             
             // 3. Si no hay nada que actualizar
@@ -103,7 +108,9 @@ export default class TransaccionesController {
             }
             
             // 4. Actualizar en BD
+            console.log("se rompe aqui");
             await TransaccionesModel.update(id, datosParaActualizar);
+            console.log("actualizacion realizada");
             
             // 5. Obtener transacción actualizada (con nombre de categoría)
             const transaccionActualizada = await TransaccionesModel.getById(id);
@@ -112,6 +119,7 @@ export default class TransaccionesController {
             
         } catch (error) {
             res.status(500).json({ error: error.message });
+            console.log("req body en el error",req.body);
         }
     }
 

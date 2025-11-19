@@ -8,22 +8,11 @@ GET http://localhost:1234/ingresos
 ### recuperar informacion de los ingresos por mes y año     //Funciona  //Funciona
 GET http://localhost:1234/ingresos/2024/6
 
+### recuperar informacion de los ingresos por id    //Funciona  //Funciona
+GET http://localhost:1234/ingresos/07e3a745-b8bf-11f0-bdfa-e0d55e61010f
+
 ### Para crear un ingreso     //Funciona  //Funciona
 POST http://localhost:1234/ingresos
-Content-Type: application/json
-
-{
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
-  "concepto": "Venta de bicicleta",
-  "tipo": "gasto",
-  "cantidad": 1300,
-  "categoria": "venta",
-  "fecha": "2024-07-15"
-}
-
-
-### actualizar un ingreso   //Funciona //Funciona
-PUT http://localhost:1234/ingresos/b7503c15-4632-4591-a367-a1209cd8d077
 Content-Type: application/json
 
 {
@@ -31,7 +20,23 @@ Content-Type: application/json
   "concepto": "Venta de colchones",
   "tipo": "gasto",
   "cantidad": 1300,
-  "categoria": "salario",
+  "categoria": "venta",
+  "fecha": "2024-07-15"
+}
+
+
+
+### actualizar un ingreso   //Funciona //Funciona
+PUT http://localhost:1234/ingresos/1c36d05a-b8bf-11f0-bdfa-e0d55e61010f
+
+Content-Type: application/json
+
+{
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "concepto": "Venta de almohadas",
+  "tipo": "gasto",
+  "cantidad": 1300,
+  "categoria": "venta",
   "fecha": "2024-07-15"
 }
 

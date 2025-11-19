@@ -5,27 +5,37 @@ import { randomUUID } from 'crypto';
 export default class TransaccionesModel {
 
     // ✅ Obtener todas las transacciones por tipo (ingreso o gasto)
-    static async getAll(tipo) {
-        const [rows] = await connection.query(
-            `SELECT 
-     BIN_TO_UUID(t.id) AS id,
-     BIN_TO_UUID(t.id_usuario) AS id_usuario,
-     t.tipo, 
-     t.concepto, 
-     t.cantidad, 
-     t.id_categoria,
-     c.nombre AS categoria,
-     t.fecha
-   FROM transacciones t
-   LEFT JOIN categorias c ON t.id_categoria = c.id
-   WHERE t.tipo = ?`,
-            [tipo]
-           );
-        return rows.map(row => ({
-        ...row,
-        cantidad: parseFloat(row.cantidad)
-    }));
-    }
+ static async getAll(tipo) {
+  const [rows] = await connection.query(
+    `SELECT 
+      BIN_TO_UUID(t.id) AS id,
+      BIN_TO_UUID(t.id_usuario) AS id_usuario,
+      t.tipo, 
+      t.concepto, 
+      t.cantidad, 
+      t.id_categoria,
+      c.nombre AS categoria,
+      t.fecha
+    FROM transacciones t
+    LEFT JOIN categorias c ON t.id_categoria = c.id
+    WHERE t.tipo = ?`,
+    [tipo]
+  );
+
+  // ✅ Formatear la fecha para enviar solo la parte de la fecha (YYYY-MM-DD)
+  return rows.map(row => {
+    const fecha = new Date(row.fecha);
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+
+    return {
+      ...row,
+      fecha: `${año}-${mes}-${dia}`,
+      cantidad: parseFloat(row.cantidad)
+    };
+  });
+}
 
     // ✅ Filtrar por mes y año
     static async getByMonthYear(tipo, anyo, mes) {

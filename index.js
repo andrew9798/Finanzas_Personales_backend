@@ -5,7 +5,7 @@ import { corsMiddleware } from './middelwares/cors.js';
 
 // Middlewares
 app.use(corsMiddleware);
-app.use(json());
+app.use(express.json());
 import { gastoRouter } from './routes/gastosRouter.js';
 import { ingresoRouter } from './routes/ingresosRouter.js';
 import { crearRouterTransacciones } from './routes/transaccionesRouter.js';
