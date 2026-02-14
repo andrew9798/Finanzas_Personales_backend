@@ -56,11 +56,20 @@ export default class TransaccionesModel {
        AND MONTH(fecha) = ?`,
             [tipo, anyo, mes]
         );
-        return rows.map(row => ({
-        ...row,
-        cantidad: parseFloat(row.cantidad)
-    }));
-    }
+  // ✅ Formatear la fecha para enviar solo la parte de la fecha (YYYY-MM-DD)
+  return rows.map(row => {
+    const fecha = new Date(row.fecha);
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+
+    return {
+      ...row,
+      fecha: `${año}-${mes}-${dia}`,
+      cantidad: parseFloat(row.cantidad)
+    };
+  });
+}
 
 static async getById(id) {
   const [rows] = await connection.query(

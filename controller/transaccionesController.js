@@ -26,6 +26,7 @@ export default class TransaccionesController {
 
     static async create(req, res) {
         try {
+            console.log("lo que me llega del frontend",req.body);
             const tipo = req.tipo;
             const id_usuario = "54046b1e-b8be-11f0-bdfa-e0d55e61010f"; // Valor fijo para pruebas
             const transaccionData = req.body;
@@ -37,7 +38,6 @@ export default class TransaccionesController {
                 id_categoria = await TransaccionesModel.getCategoriaIdByNombre(categoria, tipo);
                 
                 if (!id_categoria) {
-                    console.log("aqui esta el error");
                     return res.status(400).json({ 
                         error: `La categoría "${categoria}" no existe para tipo "${tipo}"` 
                     });
@@ -52,6 +52,7 @@ export default class TransaccionesController {
                 id_categoria,
                 id_usuario
             };
+            console.log("nueva transaccion a crear", nuevaTransaccion);
             
             await TransaccionesModel.create(nuevaTransaccion);
             
@@ -63,6 +64,7 @@ export default class TransaccionesController {
             
         } catch (error) {
             res.status(500).json({ error: error.message });
+            console.log("req body en el error",req.body);
         }
     }
 
@@ -83,7 +85,7 @@ export default class TransaccionesController {
             
             // 2. Si viene 'categoria' (nombre), convertirlo a id_categoria
             let datosParaActualizar = { ...restData };
-            console.log("datos para actualizar", datosParaActualizar);
+            // console.log("datos para actualizar", datosParaActualizar);
             
 
             if (categoria) {
@@ -99,7 +101,7 @@ export default class TransaccionesController {
                 }
                 
                 datosParaActualizar.id_categoria = id_categoria;
-                console.log("datos actualizados", datosParaActualizar);
+                // console.log("datos actualizados", datosParaActualizar);
             }
             
             // 3. Si no hay nada que actualizar
@@ -108,7 +110,6 @@ export default class TransaccionesController {
             }
             
             // 4. Actualizar en BD
-            console.log("se rompe aqui");
             await TransaccionesModel.update(id, datosParaActualizar);
             console.log("actualizacion realizada");
             
