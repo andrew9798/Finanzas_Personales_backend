@@ -40,10 +40,23 @@ export default class TransaccionesController {
             const { nickname } = req.params;
             const transaccion = await TransaccionesModel.getByNickname(tipo, nickname);
             res.status(200).json(transaccion);
-        } catch (error) {{
+        } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
-}
+
+    static async create(req, res) {
+        try {
+            console.log("lo que me llega del frontend",req.body);
+            const tipo = req.tipo;
+            const id_usuario = randomUUID(); 
+            const transaccionData = req.body;
+            const { categoria, ...restData } = transaccionData;
+            const transaccion = await TransaccionesModel.create(tipo, id_usuario, restData);
+            res.status(201).json(transaccion);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 
 }
