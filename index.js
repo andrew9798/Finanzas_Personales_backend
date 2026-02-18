@@ -10,6 +10,10 @@ import { gastoRouter } from './routes/gastosRouter.js';
 import { ingresoRouter } from './routes/ingresosRouter.js';
 import { crearRouterTransacciones } from './routes/transaccionesRouter.js';
 import { categoriasRouter } from './routes/categoriasRouter.js';
+import { authRouter } from './routes/AuthRouter.js';
+
+// Rutas de autenticación
+app.use('/auth', authRouter);
 
 
 // Deshabilitar la cabecera 'X-Powered-By' por seguridad
