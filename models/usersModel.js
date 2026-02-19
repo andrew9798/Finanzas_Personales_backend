@@ -1,4 +1,5 @@
 import connection from "../data/Connection.js";
+import { randomUUID } from 'crypto';
 import bcrypt from "bcrypt";
 
 export default class userModel {
@@ -10,7 +11,7 @@ export default class userModel {
                 nickname,
                 gmail,
                 tipo,
-                fecha_registro,
+                fecha_creacion,
                 ultimo_acceso
             FROM usuarios
             WHERE tipo = ?`,
@@ -27,7 +28,7 @@ export default class userModel {
                 nickname,
                 gmail,
                 tipo,
-                fecha_registro,
+                fecha_creacion,
                 ultimo_acceso
             FROM usuarios
             WHERE id = ?`,
@@ -45,7 +46,7 @@ export default class userModel {
                 gmail,
                 pass,
                 tipo,
-                fecha_registro,
+                fecha_creacion,
                 ultimo_acceso
             FROM usuarios
             WHERE gmail = ?`,
@@ -69,22 +70,22 @@ export default class userModel {
         return rows[0];
     }
 
-    // Crear nuevo usuario (registro)
-    static async create(userData) {
-        const { nickname, gmail, pass, tipo = 'usuario' } = userData;
-        
-        // Encriptar contraseña
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(pass, saltRounds);
+// Crear nuevo usuario (registro)
+static async create(userData) {
+    const { nickname, gmail, pass, tipo = 'usuario' } = userData;
 
-        const [result] = await connection.query(
-            `INSERT INTO usuarios (nickname, gmail, pass, tipo, fecha_registro)
-            VALUES (?, ?, ?, ?, NOW())`,
-            [nickname, gmail, hashedPassword, tipo]
-        );
+    const id = randomUUID(); // ← generar UUID
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(pass, saltRounds);
 
-        return result.insertId;
-    }
+    await connection.query(
+        `INSERT INTO usuarios (id, nickname, gmail, pass, tipo, fecha_creacion)
+        VALUES (?, ?, ?, ?, ?, NOW())`,
+        [id, nickname, gmail, hashedPassword, tipo] // ← id como primer parámetro
+    );
+
+    return id; // ← devolver el UUID, no result.insertId
+}
 
     // Verificar contraseña (para login)
     static async verifyPassword(plainPassword, hashedPassword) {
@@ -163,7 +164,7 @@ export default class userModel {
         const [rows] = await connection.query(
             `SELECT
                 COUNT(*) as total_actividades,
-                DATE(fecha_registro) as miembro_desde
+                DATE(fecha_creacion) as miembro_desde
             FROM usuarios
             WHERE id = ?`,
             [id]

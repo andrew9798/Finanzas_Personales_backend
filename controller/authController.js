@@ -1,98 +1,91 @@
-import bcrypt from 'bcrypt';
+import userModel from '../models/usersModel.js';
 import jwt from 'jsonwebtoken';
-import connection from '../data/Connection.js';
 
-const SALT_ROUNDS = 10;
+export default class authController {
 
-const AuthController = {
+    static async register(req, res) {
+        try {
+            const { nickname, gmail, pass } = req.body;
 
-  async register(req, res) {
-    const { username, email, password } = req.body;
+            // Validar campos requeridos
+            if (!nickname || !gmail || !pass) {
+                return res.status(400).json({ error: 'Faltan campos: nickname, gmail y pass son obligatorios' });
+            }
 
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
-    }
+            // Verificar duplicados
+            const emailExiste = await userModel.emailExists(gmail);
+            if (emailExiste) {
+                return res.status(409).json({ error: 'El email ya está registrado' });
+            }
 
-    try {
-        // Esto lo tengo que cambiar porque quiero que se sepa si es el email o es el nickname el que ya existe.
-      const [existing] = await connection.query(
-        'SELECT id FROM users WHERE email = ? OR username = ?',
-        [email, username]
-      );
+            const nicknameExiste = await userModel.nicknameExists(nickname);
+            if (nicknameExiste) {
+                return res.status(409).json({ error: 'El nickname ya está en uso' });
+            }
 
-      if (existing.length > 0) {
-        return res.status(409).json({ error: 'El email o nombre de usuario ya está registrado' });
-      }
+            // Crear usuario (tipo 'usuario' por defecto, definido en el model)
+            const insertId = await userModel.create({ nickname, gmail, pass });
 
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
-      const [result] = await connection.query(
-        'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-        [username, email, hashedPassword]
-      );
-
-      return res.status(201).json({
-        message: 'Usuario registrado correctamente',
-        userId: result.insertId
-      });
-
-    } catch (error) {
-      console.error('Error en register:', error);
-      return res.status(500).json({ error: 'Error interno del servidor' });
-    }
-  },
-
-  async login(req, res) {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email y contraseña son obligatorios' });
-    }
-
-    try {
-      const [rows] = await connection.query(
-        'SELECT * FROM users WHERE email = ?',
-        [email]
-      );
-
-      if (rows.length === 0) {
-        return res.status(401).json({ error: 'Credenciales inválidas' });
-      }
-
-      const user = rows[0];
-
-      const validPassword = await bcrypt.compare(password, user.password);
-
-      if (!validPassword) {
-        return res.status(401).json({ error: 'Credenciales inválidas' });
-      }
-
-      const token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '8h' }
-      );
-
-      return res.status(200).json({
-        message: 'Login exitoso',
-        token,
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email
+            res.status(201).json({
+                message: 'Usuario registrado correctamente',
+                id: insertId
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
-      });
-
-    } catch (error) {
-      console.error('Error en login:', error);
-      return res.status(500).json({ error: 'Error interno del servidor' });
     }
-  },
 
-  async logout(req, res) {
-    // En JWT stateless el logout real es responsabilidad del cliente
-    return res.status(200).json({ message: 'Logout correcto (elimina el token del cliente)' });
-  }
-};
+    static async login(req, res) {
+        try {
+            const { gmail, pass } = req.body;
 
-export default AuthController;
+            if (!gmail || !pass) {
+                return res.status(400).json({ error: 'gmail y pass son obligatorios' });
+            }
+
+            // Buscar usuario (getByEmail incluye el pass hasheado)
+            const user = await userModel.getByEmail(gmail);
+            if (!user) {
+                return res.status(401).json({ error: 'Credenciales incorrectas' });
+            }
+
+            // Verificar contraseña
+            const passwordValido = await userModel.verifyPassword(pass, user.pass);
+            if (!passwordValido) {
+                return res.status(401).json({ error: 'Credenciales incorrectas' });
+            }
+
+            // Actualizar último acceso
+            await userModel.updateLastAccess(user.id);
+
+            // Generar JWT con tipo incluido (aquí es donde se asigna req.tipo luego)
+            const token = jwt.sign(
+                {
+                    id: user.id,
+                    tipo: user.tipo,       // <-- esto llega como req.tipo en tus controllers
+                    nickname: user.nickname
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
+            res.status(200).json({
+                token,
+                user: {
+                    id: user.id,
+                    nickname: user.nickname,
+                    gmail: user.gmail,
+                    tipo: user.tipo
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    static async logout(req, res) {
+        // JWT es stateless: el logout real ocurre en el cliente borrando el token.
+        // Si necesitas invalidación server-side, implementa una blacklist en Redis o BD.
+        res.status(200).json({ message: 'Sesión cerrada correctamente' });
+    }
+}

@@ -1,90 +1,306 @@
+######################## INGRESOS ################################
 
-######################## GASTOS ################################
-
-
-### Recuperar información de los ingresos         //Funciona  //Funciona  
+### [OK] Recuperar todos los ingresos
 GET http://localhost:1234/ingresos
 
-### recuperar informacion de los ingresos por mes y año     //Funciona  //Funciona
+### [OK] Recuperar ingresos por mes y año (junio 2024)
 GET http://localhost:1234/ingresos/2024/6
 
-### recuperar informacion de los ingresos por id    //Funciona  //Funciona
+### [ERROR 404] Recuperar ingresos de un mes sin datos
+GET http://localhost:1234/ingresos/1800/1
+
+### [OK] Recuperar ingreso por id
 GET http://localhost:1234/ingresos/07e3a745-b8bf-11f0-bdfa-e0d55e61010f
 
-### Para crear un ingreso     //Funciona  //Funciona
+### [ERROR 404] Recuperar ingreso con id inexistente
+GET http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
+
+### [OK] Crear un ingreso completo
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
- {
-  "id": "60b9b721-4664-41a7-b922-a1c298de8a03",
+{
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
-  "concepto": "Salario",
-  "cantidad": 330,
+  "concepto": "Salario marzo",
+  "cantidad": 1500,
   "categoria": "Trabajo",
-  "fecha": "2025-12-17",
+  "fecha": "2024-03-01",
   "tipo": "ingreso"
 }
 
+### [ERROR 400] Crear ingreso sin concepto
+POST http://localhost:1234/ingresos
+Content-Type: application/json
 
+{
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "cantidad": 1500,
+  "categoria": "Trabajo",
+  "fecha": "2024-03-01"
+}
 
+### [ERROR 400] Crear ingreso con cantidad negativa
+POST http://localhost:1234/ingresos
+Content-Type: application/json
 
+{
+  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "concepto": "Salario",
+  "cantidad": -500,
+  "categoria": "Trabajo",
+  "fecha": "2024-03-01"
+}
 
-### actualizar un ingreso   //Funciona //Funciona
+### [ERROR 400] Crear ingreso con body vacío
+POST http://localhost:1234/ingresos
+Content-Type: application/json
+
+{}
+
+### [OK] Actualizar un ingreso
 PUT http://localhost:1234/ingresos/1c36d05a-b8bf-11f0-bdfa-e0d55e61010f
 Content-Type: application/json
 
 {
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
-  "concepto": "Venta de almohadas",
-  "tipo": "gasto",
-  "cantidad": 1300,
-  "categoria": "venta",
+  "concepto": "Salario actualizado",
+  "cantidad": 1800,
+  "categoria": "Trabajo",
   "fecha": "2024-07-15"
 }
 
-### eliminar un ingreso  //Funciona //Funciona
-DELETE http://localhost:1234/ingresos/1 
+### [ERROR 404] Actualizar ingreso con id inexistente
+PUT http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "concepto": "Test",
+  "cantidad": 100,
+  "categoria": "Trabajo",
+  "fecha": "2024-07-15"
+}
+
+### [OK] Eliminar un ingreso
+DELETE http://localhost:1234/ingresos/1c36d05a-b8bf-11f0-bdfa-e0d55e61010f
+
+### [ERROR 404] Eliminar ingreso inexistente
+DELETE http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
 
 
-######################## INGRESOS ################################
+######################## GASTOS ################################
 
-
-### Recuperar información de los gastos      //Funciona //Funciona
+### [OK] Recuperar todos los gastos
 GET http://localhost:1234/gastos
 
-### recuperar informacion de los gastos por mes y año    //Funciona //Funciona
+### [OK] Recuperar gastos por mes y año (julio 2024)
 GET http://localhost:1234/gastos/2024/7
 
+### [ERROR 404] Recuperar gastos de un mes sin datos
+GET http://localhost:1234/gastos/1800/1
 
-### Para crear un gasto   //Funciona  //funciona
+### [OK] Recuperar gasto por id
+GET http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
+
+### [ERROR 404] Recuperar gasto con id inexistente
+GET http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
+
+### [OK] Crear un gasto completo
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
 {
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
-  "concepto": "viaje italia",
-  "cantidad": 1300,
-  "categoria": "Ocio",
-  "fecha": "2024-07-15"
+  "concepto": "Supermercado",
+  "cantidad": 85,
+  "categoria": "Alimentación",
+  "fecha": "2024-07-10"
 }
 
-### actualizar un gasto   //Funciona  //Funciona
+### [ERROR 400] Crear gasto sin campos obligatorios
+POST http://localhost:1234/gastos
+Content-Type: application/json
+
+{
+  "concepto": "Sin usuario ni cantidad"
+}
+
+### [ERROR 400] Crear gasto con body vacío
+POST http://localhost:1234/gastos
+Content-Type: application/json
+
+{}
+
+### [OK] Actualizar un gasto
 PUT http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
 Content-Type: application/json
 
 {
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
-  "concepto": "viaje francia",
-  "cantidad": 1300,
+  "concepto": "Viaje Francia actualizado",
+  "cantidad": 950,
+  "categoria": "Ocio",
+  "fecha": "2024-07-20"
+}
+
+### [ERROR 404] Actualizar gasto con id inexistente
+PUT http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "concepto": "Test",
+  "cantidad": 100,
   "categoria": "Ocio",
   "fecha": "2024-07-15"
 }
 
-### eliminar un gasto   //Funciona  //funciona 
+### [OK] Eliminar un gasto
 DELETE http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
 
-### Recuperar categorías de gasto   //Funciona  //Funciona
+### [ERROR 404] Eliminar gasto inexistente
+DELETE http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
+
+### [OK] Recuperar categorías de gasto
 GET http://localhost:1234/categorias/gasto
 
-### Recuperar categorías de ingreso   //Funciona  //Funciona
+### [OK] Recuperar categorías de ingreso
 GET http://localhost:1234/categorias/ingreso
+
+### [ERROR 404] Recuperar categorías de tipo inexistente
+GET http://localhost:1234/categorias/inventado
+
+
+######################## AUTH ################################
+
+### [OK] Registro de nuevo usuario
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+  "nickname": "ana_perez",
+  "gmail": "ana@example.com",
+  "pass": "Ana12345!"
+}
+
+### [ERROR 409] Registro con email duplicado
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+  "nickname": "otro_nick",
+  "gmail": "ana@example.com",
+  "pass": "Test12345!"
+}
+
+### [ERROR 409] Registro con nickname duplicado
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+  "nickname": "ana_perez",
+  "gmail": "otro@example.com",
+  "pass": "Test12345!"
+}
+
+### [ERROR 400] Registro sin contraseña
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+  "nickname": "nuevo_user",
+  "gmail": "nuevo@example.com"
+}
+
+### [ERROR 400] Registro con body vacío
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{}
+
+### [OK] Login correcto (copia el token de la respuesta)
+POST http://localhost:1234/auth/login
+Content-Type: application/json
+
+{
+  "gmail": "ana@example.com",
+  "pass": "Ana12345!"
+}
+
+### [ERROR 401] Login con contraseña incorrecta
+POST http://localhost:1234/auth/login
+Content-Type: application/json
+
+{
+  "gmail": "ana@example.com",
+  "pass": "passwordMal"
+}
+
+### [ERROR 401] Login con email inexistente
+POST http://localhost:1234/auth/login
+Content-Type: application/json
+
+{
+  "gmail": "noexiste@example.com",
+  "pass": "Test12345!"
+}
+
+### [ERROR 400] Login sin contraseña
+POST http://localhost:1234/auth/login
+Content-Type: application/json
+
+{
+  "gmail": "ana@example.com"
+}
+
+### [OK] Logout con token válido (pega aquí el token del login)
+POST http://localhost:1234/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIzZjA4ZmM0LWU1NmYtNGI5Yy1iNGNiLTY3NTZhMGE3OTQyOSIsInRpcG8iOiJ1c3VhcmlvIiwibmlja25hbWUiOiJhbmFfcGVyZXoiLCJpYXQiOjE3NzE1MjQ2NDEsImV4cCI6MTc3MTYxMTA0MX0.n2ehyoXxbdqm5yqQn3fnbpW8ofNT7nuKuk7eGsBhhPI
+
+### [ERROR 401] Logout sin token
+POST http://localhost:1234/auth/logout
+
+### [ERROR 401] Logout con token mal formado
+POST http://localhost:1234/auth/logout
+Authorization: Bearer esto_no_es_un_token_valido
+
+
+######################## USUARIOS ################################
+
+### [OK] Recuperar todos los usuarios
+GET http://localhost:1234/usuarios
+
+### [OK] Recuperar usuario por id
+GET http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+
+### [ERROR 404] Recuperar usuario con id inexistente
+GET http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
+
+### [OK] Actualizar datos de un usuario
+PUT http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+Content-Type: application/json
+
+{
+  "nickname": "ana_perez_editado",
+  "gmail": "ana_nueva@example.com"
+}
+
+### [ERROR 404] Actualizar usuario inexistente
+PUT http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "nickname": "fantasma"
+}
+
+### [ERROR 409] Actualizar con nickname ya en uso por otro usuario
+PUT http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+Content-Type: application/json
+
+{
+  "nickname": "ana_perez"
+}
+
+### [OK] Eliminar un usuario
+DELETE http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+
+### [ERROR 404] Eliminar usuario inexistente
+DELETE http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000

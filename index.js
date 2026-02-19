@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { json } from 'express';
 import { randomUUID } from 'crypto';
 const app = express();
@@ -6,11 +7,13 @@ import { corsMiddleware } from './middelwares/cors.js';
 // Middlewares
 app.use(corsMiddleware);
 app.use(express.json());
-import { gastoRouter } from './routes/gastosRouter.js';
-import { ingresoRouter } from './routes/ingresosRouter.js';
-import { crearRouterTransacciones } from './routes/transaccionesRouter.js';
-import { categoriasRouter } from './routes/categoriasRouter.js';
-import { authRouter } from './routes/AuthRouter.js';
+import { gastoRouter } from './router/gastosRouter.js';
+import { ingresoRouter } from './router/ingresosRouter.js';
+import { crearRouterTransacciones } from './router/transaccionesRouter.js';
+import { categoriasRouter } from './router/categoriasRouter.js';
+import { authRouter } from './router/AuthRouter.js';
+import { usersRouter } from './router/usersRouter.js';
+import { verifyToken } from './middelwares/auth.js';
 
 // Rutas de autenticación
 app.use('/auth', authRouter);
@@ -22,8 +25,9 @@ app.disable('x-powered-by');
 
 
 // ⭐ RUTAS
-app.use('/ingresos', crearRouterTransacciones('ingreso'));
-app.use('/gastos', crearRouterTransacciones('gasto')); 
+app.use('/ingresos', verifyToken,crearRouterTransacciones('ingreso'));
+app.use('/gastos',verifyToken, crearRouterTransacciones('gasto')); 
+app.use('/usuarios', verifyToken, usersRouter);
 app.use('/categorias', categoriasRouter);
 
 
