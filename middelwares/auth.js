@@ -1,27 +1,26 @@
 import jwt from 'jsonwebtoken';
 
-// Middleware base - verifica que el token sea válido
 export const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1]; // "Bearer <token>"
+    // Saltar autenticación en desarrollo
+    if (process.env.SKIP_AUTH === 'true') return next();
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Token requerido' });
+    }
+
+    const token = authHeader.split(' ')[1]; // "Bearer <token>"
 
     if (!token) {
-        return res.status(401).json({ error: 'Token requerido' });
+        return res.status(401).json({ error: 'Token mal formado' });
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded.id;
-        req.tipo = decoded.tipo;     // <-- aquí se asigna el req.tipo que usas en tus controllers
+        req.user = decoded;
         next();
     } catch (error) {
-        res.status(403).json({ error: 'Token inválido o expirado' });
+        return res.status(401).json({ error: 'Token inválido o expirado' });
     }
-};
-
-// Middleware extra - solo admins
-export const verifyAdmin = (req, res, next) => {
-    if (req.tipo !== 'admin') {
-        return res.status(403).json({ error: 'Acceso denegado: se requiere rol admin' });
-    }
-    next();
 };
