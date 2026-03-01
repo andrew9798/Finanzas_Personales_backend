@@ -25,9 +25,9 @@ app.disable('x-powered-by');
 
 
 // ⭐ RUTAS
-app.use('/ingresos', verifyToken,crearRouterTransacciones('ingreso'));
-app.use('/gastos',verifyToken, crearRouterTransacciones('gasto')); 
-app.use('/usuarios', verifyToken, usersRouter);
+app.use('/ingresos',crearRouterTransacciones('ingreso'));
+app.use('/gastos', crearRouterTransacciones('gasto')); 
+app.use('/usuarios', usersRouter);
 app.use('/categorias', categoriasRouter);
 
 

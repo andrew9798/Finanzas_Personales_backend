@@ -18,6 +18,7 @@ export default class ingresosController {
     // Endpoint para crear un nuevo ingreso
     static async createIngreso(req, res) {
         const ingresoData = req.body;
+        console.log("crear ingreso",req.body);
         const nuevoIngreso = { ...ingresoData, id: randomUUID() };
         await TransaccionesModel.create(nuevoIngreso);
         res.status(201).json(nuevoIngreso);

@@ -4,13 +4,13 @@
 GET http://localhost:1234/ingresos
 
 ### [OK] Recuperar ingresos por mes y año (junio 2024)
-GET http://localhost:1234/ingresos/2024/6
+GET http://localhost:1234/ingresos/2024/3
 
 ### [ERROR 404] Recuperar ingresos de un mes sin datos
 GET http://localhost:1234/ingresos/1800/1
 
 ### [OK] Recuperar ingreso por id
-GET http://localhost:1234/ingresos/07e3a745-b8bf-11f0-bdfa-e0d55e61010f
+GET http://localhost:1234/ingresos/ce9d17d8-6503-4266-8edf-cfc3c8c7d334
 
 ### [ERROR 404] Recuperar ingreso con id inexistente
 GET http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
@@ -20,10 +20,9 @@ POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "concepto": "Salario marzo",
   "cantidad": 1500,
-  "categoria": "Trabajo",
+  "categoria": "Salario",
   "fecha": "2024-03-01",
   "tipo": "ingreso"
 }
@@ -35,7 +34,7 @@ Content-Type: application/json
 {
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "cantidad": 1500,
-  "categoria": "Trabajo",
+  "categoria": "Salario",
   "fecha": "2024-03-01"
 }
 

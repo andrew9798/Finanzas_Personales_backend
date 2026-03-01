@@ -52,6 +52,7 @@ export default class TransaccionesController {
             const nuevoUser = { ...userData, id: randomUUID(), tipo };
             await userModel.create(nuevoUser);
             res.status(201).json(nuevoUser);
+            console.log('req.user.id:', typeof req.user.id, req.user.id);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
