@@ -24,12 +24,32 @@ export default class TransaccionesController {
         }
     }
 
+    // NUEVA FUNCIÓN AÑADIDA: Obtener por ID
+    static async getById(req, res) {
+        try {
+            const { id } = req.params;
+            
+            const transaccion = await TransaccionesModel.getById(id);
+            
+            if (!transaccion) {
+                return res.status(404).json({ error: 'Transacción no encontrada' });
+            }
+            
+            res.status(200).json(transaccion);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     static async create(req, res) {
         try {
-            console.log("lo que me llega del frontend",req.body);
             const tipo = req.tipo;
             const id_usuario = "54046b1e-b8be-11f0-bdfa-e0d55e61010f"; // Valor fijo para pruebas
             const transaccionData = req.body;
+            const quantity = req.body.cantidad;
+            if (quantity < 0) {
+                return res.status(400).json({ error: "La cantidad no puede ser negativa" });
+            }
             const { categoria, ...restData } = transaccionData;
             
             // 1. Buscar el id_categoria si se envió una categoría

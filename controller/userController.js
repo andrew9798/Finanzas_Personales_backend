@@ -5,6 +5,8 @@ export default class TransaccionesController {
     static async getAll(req, res) {
         try {
             const tipo = req.tipo;
+            // const tipo = "usuario";
+            console.log("tipo en getAll usuarios", tipo);
             const users = await userModel.getAll(tipo);
             res.status(200).json(users);
         } catch (error) {
@@ -49,6 +51,10 @@ export default class TransaccionesController {
         try {
             const tipo = req.tipo;
             const userData = req.body;
+            const quantity = req.body.cantidad;
+            if (quantity < 0) {
+                return res.status(400).json({ error: "La cantidad no puede ser negativa" });
+            }
             const nuevoUser = { ...userData, id: randomUUID(), tipo };
             await userModel.create(nuevoUser);
             res.status(201).json(nuevoUser);

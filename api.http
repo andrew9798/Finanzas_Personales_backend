@@ -10,7 +10,7 @@ GET http://localhost:1234/ingresos/2024/3
 GET http://localhost:1234/ingresos/1800/1
 
 ### [OK] Recuperar ingreso por id
-GET http://localhost:1234/ingresos/ce9d17d8-6503-4266-8edf-cfc3c8c7d334
+GET http://localhost:1234/ingresos/1d90474e-aa2e-4a22-9274-5b97406349b1
 
 ### [ERROR 404] Recuperar ingreso con id inexistente
 GET http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
@@ -45,8 +45,8 @@ Content-Type: application/json
 {
   "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "concepto": "Salario",
-  "cantidad": -500,
-  "categoria": "Trabajo",
+  "cantidad": -700,
+  "categoria": "Salario",
   "fecha": "2024-03-01"
 }
 
@@ -57,14 +57,14 @@ Content-Type: application/json
 {}
 
 ### [OK] Actualizar un ingreso
-PUT http://localhost:1234/ingresos/1c36d05a-b8bf-11f0-bdfa-e0d55e61010f
+PUT http://localhost:1234/ingresos/1d90474e-aa2e-4a22-9274-5b97406349b1
 Content-Type: application/json
 
 {
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
+  "id_usuario": "1d90474e-aa2e-4a22-9274-5b97406349b1",
   "concepto": "Salario actualizado",
   "cantidad": 1800,
-  "categoria": "Trabajo",
+  "categoria": "Salario",
   "fecha": "2024-07-15"
 }
 
@@ -80,12 +80,12 @@ Content-Type: application/json
 }
 
 ### [OK] Eliminar un ingreso
-DELETE http://localhost:1234/ingresos/1c36d05a-b8bf-11f0-bdfa-e0d55e61010f
+DELETE http://localhost:1234/ingresos/1d90474e-aa2e-4a22-9274-5b97406349b1
 
 ### [ERROR 404] Eliminar ingreso inexistente
 DELETE http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
 
-
+// Todo comprobado hasta aqui /  1/3/2026
 ######################## GASTOS ################################
 
 ### [OK] Recuperar todos los gastos
@@ -98,7 +98,7 @@ GET http://localhost:1234/gastos/2024/7
 GET http://localhost:1234/gastos/1800/1
 
 ### [OK] Recuperar gasto por id
-GET http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
+GET http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
 
 ### [ERROR 404] Recuperar gasto con id inexistente
 GET http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
@@ -175,9 +175,9 @@ POST http://localhost:1234/auth/register
 Content-Type: application/json
 
 {
-  "nickname": "ana_perez",
-  "gmail": "ana@example.com",
-  "pass": "Ana12345!"
+  "nickname": "jose_perez",
+  "gmail": "jose@example.com",
+  "pass": "Jose12345!"
 }
 
 ### [ERROR 409] Registro con email duplicado
