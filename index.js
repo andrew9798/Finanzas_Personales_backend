@@ -1,14 +1,11 @@
 import 'dotenv/config';
 import express, { json } from 'express';
-import { randomUUID } from 'crypto';
 const app = express();
 import { corsMiddleware } from './middelwares/cors.js';
 
 // Middlewares
 app.use(corsMiddleware);
 app.use(express.json());
-import { gastoRouter } from './router/gastosRouter.js';
-import { ingresoRouter } from './router/ingresosRouter.js';
 import { crearRouterTransacciones } from './router/transaccionesRouter.js';
 import { categoriasRouter } from './router/categoriasRouter.js';
 import { authRouter } from './router/AuthRouter.js';

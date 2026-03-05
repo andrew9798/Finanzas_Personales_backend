@@ -1,21 +1,21 @@
 ######################## INGRESOS ################################
 
-### [OK] Recuperar todos los ingresos
+### [OK] Recuperar todos los ingresos // check
 GET http://localhost:1234/ingresos
 
-### [OK] Recuperar ingresos por mes y año (junio 2024)
-GET http://localhost:1234/ingresos/2024/3
+### [OK] Recuperar ingresos por mes y año (junio 2024) // check
+GET http://localhost:1234/ingresos/2024/3 
 
-### [ERROR 404] Recuperar ingresos de un mes sin datos
+### [ERROR 404] Recuperar ingresos de un mes sin datos // check
 GET http://localhost:1234/ingresos/1800/1
 
-### [OK] Recuperar ingreso por id
-GET http://localhost:1234/ingresos/1d90474e-aa2e-4a22-9274-5b97406349b1
+### [OK] Recuperar ingreso por id  // check
+GET http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
 
-### [ERROR 404] Recuperar ingreso con id inexistente
+### [ERROR 404] Recuperar ingreso con id inexistente  // check
 GET http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
 
-### [OK] Crear un ingreso completo
+### [OK] Crear un ingreso completo  // check
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
@@ -27,7 +27,7 @@ Content-Type: application/json
   "tipo": "ingreso"
 }
 
-### [ERROR 400] Crear ingreso sin concepto
+### [ERROR 400] Crear ingreso sin concepto // check(500)
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
@@ -38,7 +38,7 @@ Content-Type: application/json
   "fecha": "2024-03-01"
 }
 
-### [ERROR 400] Crear ingreso con cantidad negativa
+### [ERROR 400] Crear ingreso con cantidad negativa  // check
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
@@ -50,14 +50,14 @@ Content-Type: application/json
   "fecha": "2024-03-01"
 }
 
-### [ERROR 400] Crear ingreso con body vacío
+### [ERROR 500] Crear ingreso con body vacío // check
 POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {}
 
-### [OK] Actualizar un ingreso
-PUT http://localhost:1234/ingresos/1d90474e-aa2e-4a22-9274-5b97406349b1
+### [OK] Actualizar un ingreso  // check
+PUT http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
 Content-Type: application/json
 
 {
@@ -68,7 +68,7 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### [ERROR 404] Actualizar ingreso con id inexistente
+### [ERROR 404] Actualizar ingreso con id inexistente   // check
 PUT http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
 Content-Type: application/json
 
@@ -79,31 +79,31 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### [OK] Eliminar un ingreso
-DELETE http://localhost:1234/ingresos/1d90474e-aa2e-4a22-9274-5b97406349b1
+### [OK] Eliminar un ingreso  // check
+DELETE http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
 
-### [ERROR 404] Eliminar ingreso inexistente
+### [ERROR 404] Eliminar ingreso inexistente  // check
 DELETE http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
 
-// Todo comprobado hasta aqui /  1/3/2026
+// Todo comprobado hasta aqui /  5/3/2026
 ######################## GASTOS ################################
 
-### [OK] Recuperar todos los gastos
+### [OK] Recuperar todos los gastos // check
 GET http://localhost:1234/gastos
 
-### [OK] Recuperar gastos por mes y año (julio 2024)
-GET http://localhost:1234/gastos/2024/7
+### [OK] Recuperar gastos por mes y año (marzo 2026)  // check
+GET http://localhost:1234/gastos/2026/3
 
-### [ERROR 404] Recuperar gastos de un mes sin datos
+### [ERROR 404 ] Recuperar gastos de un mes sin datos //check
 GET http://localhost:1234/gastos/1800/1
 
-### [OK] Recuperar gasto por id
+### [OK] Recuperar gasto por id // check
 GET http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
 
-### [ERROR 404] Recuperar gasto con id inexistente
+### [ERROR 404] Recuperar gasto con id inexistente // check
 GET http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
 
-### [OK] Crear un gasto completo
+### [OK] Crear un gasto completo  // check
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
@@ -115,7 +115,7 @@ Content-Type: application/json
   "fecha": "2024-07-10"
 }
 
-### [ERROR 400] Crear gasto sin campos obligatorios
+### [ERROR 400] Crear gasto sin campos obligatorios  // check
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
@@ -123,14 +123,14 @@ Content-Type: application/json
   "concepto": "Sin usuario ni cantidad"
 }
 
-### [ERROR 400] Crear gasto con body vacío
+### [ERROR 400] Crear gasto con body vacío  // check
 POST http://localhost:1234/gastos
 Content-Type: application/json
 
 {}
 
-### [OK] Actualizar un gasto
-PUT http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
+### [OK] Actualizar un gasto  // check
+PUT http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
 Content-Type: application/json
 
 {
@@ -141,7 +141,7 @@ Content-Type: application/json
   "fecha": "2024-07-20"
 }
 
-### [ERROR 404] Actualizar gasto con id inexistente
+### [ERROR 404] Actualizar gasto con id inexistente // check
 PUT http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
 Content-Type: application/json
 
@@ -152,16 +152,16 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### [OK] Eliminar un gasto
-DELETE http://localhost:1234/gastos/d1e14f93-c8d4-4a22-8641-b825f8fa4e6c
+### [OK] Eliminar un gasto  // check
+DELETE http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
 
-### [ERROR 404] Eliminar gasto inexistente
+### [ERROR 404] Eliminar gasto inexistente  // check
 DELETE http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
 
-### [OK] Recuperar categorías de gasto
-GET http://localhost:1234/categorias/gasto
+### [OK] Recuperar categorías de gasto  // check
+GET http://localhost:1234/categorias/gasto  
 
-### [OK] Recuperar categorías de ingreso
+### [OK] Recuperar categorías de ingreso  // check
 GET http://localhost:1234/categorias/ingreso
 
 ### [ERROR 404] Recuperar categorías de tipo inexistente
@@ -180,7 +180,7 @@ Content-Type: application/json
   "pass": "Jose12345!"
 }
 
-### [ERROR 409] Registro con email duplicado
+### [ERROR 409] Registro con email duplicado  // check
 POST http://localhost:1234/auth/register
 Content-Type: application/json
 
@@ -190,7 +190,7 @@ Content-Type: application/json
   "pass": "Test12345!"
 }
 
-### [ERROR 409] Registro con nickname duplicado
+### [ERROR 409] Registro con nickname duplicado // check
 POST http://localhost:1234/auth/register
 Content-Type: application/json
 
@@ -200,7 +200,7 @@ Content-Type: application/json
   "pass": "Test12345!"
 }
 
-### [ERROR 400] Registro sin contraseña
+### [ERROR 400] Registro sin contraseña  // check
 POST http://localhost:1234/auth/register
 Content-Type: application/json
 
@@ -209,13 +209,13 @@ Content-Type: application/json
   "gmail": "nuevo@example.com"
 }
 
-### [ERROR 400] Registro con body vacío
+### [ERROR 400] Registro con body vacío // check
 POST http://localhost:1234/auth/register
 Content-Type: application/json
 
 {}
 
-### [OK] Login correcto (copia el token de la respuesta)
+### [OK] Login correcto (copia el token de la respuesta) // check
 POST http://localhost:1234/auth/login
 Content-Type: application/json
 
@@ -224,7 +224,7 @@ Content-Type: application/json
   "pass": "Ana12345!"
 }
 
-### [ERROR 401] Login con contraseña incorrecta
+### [ERROR 401] Login con contraseña incorrecta // check
 POST http://localhost:1234/auth/login
 Content-Type: application/json
 
@@ -233,7 +233,7 @@ Content-Type: application/json
   "pass": "passwordMal"
 }
 
-### [ERROR 401] Login con email inexistente
+### [ERROR 401] Login con email inexistente  // check
 POST http://localhost:1234/auth/login
 Content-Type: application/json
 
@@ -242,7 +242,7 @@ Content-Type: application/json
   "pass": "Test12345!"
 }
 
-### [ERROR 400] Login sin contraseña
+### [ERROR 400] Login sin contraseña // check
 POST http://localhost:1234/auth/login
 Content-Type: application/json
 
@@ -250,7 +250,7 @@ Content-Type: application/json
   "gmail": "ana@example.com"
 }
 
-### [OK] Logout con token válido (pega aquí el token del login)
+### [OK] Logout con token válido (pega aquí el token del login)  // check
 POST http://localhost:1234/auth/logout
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIzZjA4ZmM0LWU1NmYtNGI5Yy1iNGNiLTY3NTZhMGE3OTQyOSIsInRpcG8iOiJ1c3VhcmlvIiwibmlja25hbWUiOiJhbmFfcGVyZXoiLCJpYXQiOjE3NzE1MjQ2NDEsImV4cCI6MTc3MTYxMTA0MX0.n2ehyoXxbdqm5yqQn3fnbpW8ofNT7nuKuk7eGsBhhPI
 

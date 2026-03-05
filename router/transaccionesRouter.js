@@ -13,6 +13,7 @@ export const crearRouterTransacciones = (tipo) => {
 
   router.get('/', TransaccionesController.getAll);
   router.get('/:anyo/:mes', TransaccionesController.getByMonthYear);
+  router.get('/:id', TransaccionesController.getById); 
   router.post('/', TransaccionesController.create);
   router.put('/:id', TransaccionesController.update);
   router.delete('/:id', TransaccionesController.delete);

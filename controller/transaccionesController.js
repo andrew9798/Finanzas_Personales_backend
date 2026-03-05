@@ -18,7 +18,12 @@ export default class TransaccionesController {
             const tipo = req.tipo;
             const { anyo, mes } = req.params;
             const transacciones = await TransaccionesModel.getByMonthYear(tipo, anyo, mes);
-            res.status(200).json(transacciones);
+            if(transacciones.length === 0) {
+                res.status(404).json(transacciones);
+            }
+            else{
+                res.status(200).json(transacciones);
+            }  
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -63,6 +68,10 @@ export default class TransaccionesController {
                     });
                 }
             }
+            const {concepto, cantidad, fecha} = req.body;
+            if (!concepto || !cantidad || !fecha || !categoria) {
+                return res.status(400).json({ error: "Faltan campos obligatorios: concepto, cantidad, fecha o categoria" });
+            }
             
             // 2. Crear la transacción con el id_categoria
             const nuevaTransaccion = { 
@@ -102,8 +111,14 @@ export default class TransaccionesController {
             if (!transaccionActual) {
                 return res.status(404).json({ error: 'Transacción no encontrada' });
             }
+
+            // 2. Validar campos obligatorios si se están actualizando
+            const {concepto, cantidad, fecha} = req.body;
+            if (!concepto || !cantidad || !fecha || !categoria) {
+                return res.status(400).json({ error: "Faltan campos obligatorios: concepto, cantidad, fecha o categoria" });
+            }
             
-            // 2. Si viene 'categoria' (nombre), convertirlo a id_categoria
+            // 3. Si viene 'categoria' (nombre), convertirlo a id_categoria
             let datosParaActualizar = { ...restData };
             // console.log("datos para actualizar", datosParaActualizar);
             
@@ -124,16 +139,16 @@ export default class TransaccionesController {
                 // console.log("datos actualizados", datosParaActualizar);
             }
             
-            // 3. Si no hay nada que actualizar
+            // 4. Si no hay nada que actualizar
             if (Object.keys(datosParaActualizar).length === 0) {
                 return res.status(400).json({ error: 'No hay datos para actualizar' });
             }
             
-            // 4. Actualizar en BD
+            // 5. Actualizar en BD
             await TransaccionesModel.update(id, datosParaActualizar);
             console.log("actualizacion realizada");
             
-            // 5. Obtener transacción actualizada (con nombre de categoría)
+            // 6. Obtener transacción actualizada (con nombre de categoría)
             const transaccionActualizada = await TransaccionesModel.getById(id);
             
             res.status(200).json(transaccionActualizada);

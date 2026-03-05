@@ -43,16 +43,16 @@ export default class authController {
                 return res.status(400).json({ error: 'gmail y pass son obligatorios' });
             }
 
-            // Buscar usuario (getByEmail incluye el pass hasheado)
+            // Buscar usuario (getByEmail incluye el pass hasheado) // check
             const user = await userModel.getByEmail(gmail);
             if (!user) {
-                return res.status(401).json({ error: 'Credenciales incorrectas' });
+                return res.status(401).json({ error: 'El email no está registrado' });
             }
 
-            // Verificar contraseña
+            // Verificar contraseña // check
             const passwordValido = await userModel.verifyPassword(pass, user.pass);
             if (!passwordValido) {
-                return res.status(401).json({ error: 'Credenciales incorrectas' });
+                return res.status(401).json({ error: 'La contraseña es incorrecta' });
             }
 
             // Actualizar último acceso
