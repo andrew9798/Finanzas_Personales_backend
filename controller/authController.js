@@ -80,6 +80,7 @@ export default class AuthController {
             const { email, password } = req.body;
 
             // 2. Buscar usuario y verificar contraseña
+            // ✅ getByEmail solo necesita el email — no recibe tipo (es login, aún no hay sesión)
             const user = await userModel.getByEmail(email);
             const passwordValido = user
                 ? await userModel.verifyPassword(password, user.password)
