@@ -78,12 +78,14 @@ export default class AuthController {
             }
 
             const { email, password } = req.body;
+            console.log("req body en login", req.body);
 
             // 2. Buscar usuario y verificar contraseña
-            // ✅ getByEmail solo necesita el email — no recibe tipo (es login, aún no hay sesión)
             const user = await userModel.getByEmail(email);
+            console.log("user:", user);
+            console.log("user.password:", user.pass);
             const passwordValido = user
-                ? await userModel.verifyPassword(password, user.password)
+                ? await userModel.verifyPassword(password, user.pass)
                 : false;
 
             // 3. Mensaje genérico siempre → evita user enumeration attack
@@ -92,14 +94,14 @@ export default class AuthController {
                 return res.status(401).json({ error: 'Credenciales incorrectas' });
             }
 
-            // 4. Log de auditoría — crítico en app financiera
-            await userModel.saveAuditLog({
-                userId:    user.id,
-                action:    'LOGIN',
-                ip:        req.ip,
-                userAgent: req.headers['user-agent'],
-                timestamp: new Date()
-            });
+            // // 4. Log de auditoría — crítico en app financiera
+            // await userModel.saveAuditLog({
+            //     userId:    user.id,
+            //     action:    'LOGIN',
+            //     ip:        req.ip,
+            //     userAgent: req.headers['user-agent'],
+            //     timestamp: new Date()
+            // });
 
             // 5. Actualizar último acceso
             await userModel.updateLastAccess(user.id);

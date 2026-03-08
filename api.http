@@ -32,7 +32,6 @@ POST http://localhost:1234/ingresos
 Content-Type: application/json
 
 {
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "cantidad": 1500,
   "categoria": "Salario",
   "fecha": "2024-03-01"
@@ -220,8 +219,8 @@ POST http://localhost:1234/auth/login
 Content-Type: application/json
 
 {
-  "gmail": "ana@example.com",
-  "pass": "Ana12345!"
+  "email": "ana@example.com",
+  "password": "Ana12345!"
 }
 
 ### [ERROR 401] Login con contraseña incorrecta // check

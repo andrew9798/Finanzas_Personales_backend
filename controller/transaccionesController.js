@@ -49,6 +49,7 @@ export default class TransaccionesController {
     static async create(req, res) {
         try {
             const tipo = req.tipo;
+            console.log("userid en create;", req.user.id);
             const id_usuario = "54046b1e-b8be-11f0-bdfa-e0d55e61010f"; // Valor fijo para pruebas
             const transaccionData = req.body;
             const quantity = req.body.cantidad;
