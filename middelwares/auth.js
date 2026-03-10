@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 export const verifyToken = (req, res, next) => {
     // Saltar autenticación en desarrollo
-    if (process.env.SKIP_AUTH === 'true') return next();
+    // if (process.env.SKIP_AUTH === 'true') return next();
 
     const authHeader = req.headers.authorization;
 

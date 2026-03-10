@@ -1,37 +1,34 @@
 import 'dotenv/config';
-import express, { json } from 'express';
-const app = express();
+import express from 'express';
 import { corsMiddleware } from './middelwares/cors.js';
-
-// Middlewares
-app.use(corsMiddleware);
-app.use(express.json());
+import { securityHeaders, apiLimiter } from './middelwares/securityMiddleware.js';
 import { crearRouterTransacciones } from './router/transaccionesRouter.js';
 import { categoriasRouter } from './router/categoriasRouter.js';
 import { authRouter } from './router/AuthRouter.js';
 import { usersRouter } from './router/usersRouter.js';
 import { verifyToken } from './middelwares/auth.js';
+import { authLimiter } from './middelwares/securityMiddleware.js';
+const app = express();
 
-// Rutas de autenticación
+// ─── Seguridad global ─────────────────────────────────────────────────────────
+app.use(securityHeaders);       // Helmet con todos los headers
+app.use(corsMiddleware);
+app.use(express.json());
+app.disable('x-powered-by');    // Helmet ya lo hace, pero no hace daño dejarlo
+
+// ─── Rutas de autenticación (con rate limiter específico) ─────────────────────
 app.use('/auth', authRouter);
 
-
-// Deshabilitar la cabecera 'X-Powered-By' por seguridad
-app.disable('x-powered-by');
-
-
-
-// ⭐ RUTAS
+// ─── Rutas protegidas ─────────────────────────────────────────────────────────
 app.use('/ingresos', verifyToken, crearRouterTransacciones('ingreso'));
 app.use('/gastos', verifyToken, crearRouterTransacciones('gasto'));
 app.use('/usuarios', verifyToken, usersRouter);
 app.use('/categorias', categoriasRouter);
 
+// Las rutas financieras también usan transactionLimiter donde aplique
+// (ver punto 2 abajo)
 
 const PORT = process.env.PORT || 1234;
-
-// ⭐ INICIA EL SERVIDOR CON EXPRESS DIRECTAMENTE
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`)
-})
-
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
