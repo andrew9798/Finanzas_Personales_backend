@@ -7,7 +7,7 @@ import { categoriasRouter } from './router/categoriasRouter.js';
 import { authRouter } from './router/AuthRouter.js';
 import { usersRouter } from './router/usersRouter.js';
 import { verifyToken } from './middelwares/auth.js';
-import { authLimiter } from './middelwares/securityMiddleware.js';
+// import { authLimiter } from './middelwares/securityMiddleware.js';
 const app = express();
 
 // ─── Seguridad global ─────────────────────────────────────────────────────────

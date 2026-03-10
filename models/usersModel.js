@@ -159,6 +159,44 @@ static async create(userData) {
         return rows.length > 0;
     }
 
+    // ─── REFRESH TOKENS ──────────────────────────────────────────────────────
+
+    // Guarda un nuevo refresh token — sobreescribe el anterior del usuario
+    static async saveRefreshToken(userId, token) {
+        // Calculamos la fecha de expiración (1 día)
+        const expiraEn = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+        await connection.query(
+            `INSERT INTO refresh_tokens (id_usuario, token, expira_en)
+             VALUES (?, ?, ?)`,
+            [userId, token, expiraEn]
+        );
+    }
+
+    // Busca un refresh token válido y devuelve el usuario asociado
+    // Verifica que el token no haya expirado en BD (doble seguridad además del JWT)
+    static async findByRefreshToken(userId, token) {
+        const [rows] = await connection.query(
+            `SELECT u.id, u.nickname, u.gmail AS email, u.tipo
+             FROM refresh_tokens rt
+             JOIN usuarios u ON u.id = rt.id_usuario
+             WHERE rt.id_usuario = ?
+               AND rt.token = ?
+               AND rt.expira_en > NOW()`,
+            [userId, token]
+        );
+        return rows[0];
+    }
+
+    // Revoca todas las sesiones activas de un usuario
+    // Se llama en login (sesión única) y en logout
+    static async revokeAllRefreshTokens(userId) {
+        await connection.query(
+            `DELETE FROM refresh_tokens WHERE id_usuario = ?`,
+            [userId]
+        );
+    }
+
     // Obtener estadísticas del usuario (para dashboard)
     static async getUserStats(id) {
         const [rows] = await connection.query(
