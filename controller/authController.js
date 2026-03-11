@@ -51,7 +51,7 @@ export default class AuthController {
                 userModel.nicknameExists(nickname)
             ]);
 
-            if (emailExiste)    return res.status(409).json({ error: 'El email ya está registrado' });
+            if (emailExiste) return res.status(409).json({ error: 'El email ya está registrado' });
             if (nicknameExiste) return res.status(409).json({ error: 'El nickname ya está en uso' });
 
             // 4. Crear usuario
@@ -70,68 +70,88 @@ export default class AuthController {
     }
 
     static async login(req, res) {
+        // 1. Validaciones declarativas
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { email, password } = req.body;
+
+        // 2. Buscar usuario en BD
+        let user;
         try {
-            // 1. Validaciones declarativas
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
+            user = await userModel.getByEmail(email);
+        } catch (error) {
+            console.error('[AuthController.login] Error al buscar usuario en BD:', error);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
 
-            const { email, password } = req.body;
-            console.log("req body en login", req.body);
-
-            // 2. Buscar usuario y verificar contraseña
-            const user = await userModel.getByEmail(email);
-            console.log("user:", user);
-            console.log("user.password:", user.pass);
-            const passwordValido = user
+        // 3. Verificar contraseña
+        let passwordValido;
+        try {
+            passwordValido = user
                 ? await userModel.verifyPassword(password, user.pass)
                 : false;
+        } catch (error) {
+            console.error('[AuthController.login] Error al verificar contraseña:', error);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
 
-            // 3. Mensaje genérico siempre → evita user enumeration attack
-            //    (saber si un email existe es info valiosa para atacantes)
-            if (!user || !passwordValido) {
-                return res.status(401).json({ error: 'Credenciales incorrectas' });
-            }
+        // 4. Mensaje genérico → evita user enumeration attack
+        if (!user || !passwordValido) {
+            return res.status(401).json({ error: 'Credenciales incorrectas' });
+        }
 
-            // // 4. Log de auditoría — crítico en app financiera
-            // await userModel.saveAuditLog({
-            //     userId:    user.id,
-            //     action:    'LOGIN',
-            //     ip:        req.ip,
-            //     userAgent: req.headers['user-agent'],
-            //     timestamp: new Date()
-            // });
-
-            // 5. Actualizar último acceso
+        // 5. Actualizar último acceso
+        try {
             await userModel.updateLastAccess(user.id);
+        } catch (error) {
+            // No es crítico — el login puede continuar aunque falle esto
+            console.warn('[AuthController.login] No se pudo actualizar ultimo_acceso:', error);
+        }
 
-            // 6. Revocar sesiones anteriores (una sesión activa a la vez)
+        // 6. Revocar sesiones anteriores
+        try {
             await userModel.revokeAllRefreshTokens(user.id);
+        } catch (error) {
+            console.error('[AuthController.login] Error al revocar sesiones anteriores:', error);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
 
-            // 7. Generar tokens
-            const accessToken  = generateAccessToken(user);
-            const refreshToken = generateRefreshToken(user);
+        // 7. Generar tokens
+        let accessToken, refreshToken;
+        try {
+            accessToken = generateAccessToken(user);
+            refreshToken = generateRefreshToken(user);
+        } catch (error) {
+            console.error('[AuthController.login] Error al generar tokens JWT:', error);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
 
-            // 8. Guardar refresh token en BD para poder invalidarlo en logout
+        // 8. Guardar refresh token en BD
+        try {
             await userModel.saveRefreshToken(user.id, refreshToken);
+        } catch (error) {
+            console.error('[AuthController.login] Error al guardar refresh token en BD:', error);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
 
-            // 9. Refresh token en cookie httpOnly (invisible para JS)
-            //    Access token en body (guardarlo en memoria React, NUNCA localStorage)
+        // 9. Enviar cookie y respuesta
+        try {
             res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
 
             return res.status(200).json({
                 accessToken,
                 user: {
-                    id:       user.id,
+                    id: user.id,
                     nickname: user.nickname,
-                    email:    user.email,
-                    tipo:     user.tipo
+                    email: user.email,
+                    tipo: user.tipo
                 }
             });
-
         } catch (error) {
-            console.error('[AuthController.login]', error);
+            console.error('[AuthController.login] Error al enviar respuesta:', error);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }
     }
@@ -167,7 +187,7 @@ export default class AuthController {
 
             // 4. Rotar el refresh token en cada uso (buena práctica de seguridad)
             //    Si el token antiguo se usa de nuevo → detectamos robo
-            const newAccessToken  = generateAccessToken(user);
+            const newAccessToken = generateAccessToken(user);
             const newRefreshToken = generateRefreshToken(user);
 
             await userModel.saveRefreshToken(user.id, newRefreshToken);
@@ -194,9 +214,9 @@ export default class AuthController {
 
                     // Log de auditoría del logout
                     await userModel.saveAuditLog({
-                        userId:    decoded.id,
-                        action:    'LOGOUT',
-                        ip:        req.ip,
+                        userId: decoded.id,
+                        action: 'LOGOUT',
+                        ip: req.ip,
                         userAgent: req.headers['user-agent'],
                         timestamp: new Date()
                     });

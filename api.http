@@ -1,34 +1,58 @@
+######################## AUTH ################################
+
+### Login (ejecutar primero)
+# @name login
+POST http://localhost:1234/auth/login
+Content-Type: application/json
+
+{
+  "email": "ana@example.com",
+  "password": "Ana12345!"
+}
+
+###
+
+@token = {{login.response.body.accessToken}}
+
+
 ######################## INGRESOS ################################
 
 ### [OK] Recuperar todos los ingresos // check
 GET http://localhost:1234/ingresos
+Authorization: Bearer {{token}}
 
-### [OK] Recuperar ingresos por mes y año (junio 2024) // check
-GET http://localhost:1234/ingresos/2024/3 
+### [OK] Recuperar ingresos por mes y año // check
+GET http://localhost:1234/ingresos/2024/3
+Authorization: Bearer {{token}}
 
 ### [ERROR 404] Recuperar ingresos de un mes sin datos // check
 GET http://localhost:1234/ingresos/1800/1
+Authorization: Bearer {{token}}
 
-### [OK] Recuperar ingreso por id  // check
+### [OK] Recuperar ingreso por id
 GET http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
+Authorization: Bearer {{token}}
 
 ### [ERROR 404] Recuperar ingreso con id inexistente  // check
 GET http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 
 ### [OK] Crear un ingreso completo  // check
 POST http://localhost:1234/ingresos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "concepto": "Salario marzo",
   "cantidad": 1500,
   "categoria": "Salario",
-  "fecha": "2024-03-01",
+  "fecha": "2026-03-01",
   "tipo": "ingreso"
 }
 
-### [ERROR 400] Crear ingreso sin concepto // check(500)
+### [ERROR 400] Crear ingreso sin concepto  //check 
 POST http://localhost:1234/ingresos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -37,38 +61,40 @@ Content-Type: application/json
   "fecha": "2024-03-01"
 }
 
-### [ERROR 400] Crear ingreso con cantidad negativa  // check
+### [ERROR 400] Crear ingreso con cantidad negativa // check
 POST http://localhost:1234/ingresos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "concepto": "Salario",
   "cantidad": -700,
   "categoria": "Salario",
   "fecha": "2024-03-01"
 }
 
-### [ERROR 500] Crear ingreso con body vacío // check
+### [ERROR 400] Crear ingreso con body vacío //  check
 POST http://localhost:1234/ingresos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {}
 
-### [OK] Actualizar un ingreso  // check
-PUT http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
+### [OK] Actualizar un ingreso // check
+PUT http://localhost:1234/ingresos/35bf5d7c-df5d-4a7d-bbf5-5fae984e6773
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "id_usuario": "1d90474e-aa2e-4a22-9274-5b97406349b1",
   "concepto": "Salario actualizado",
   "cantidad": 1800,
   "categoria": "Salario",
-  "fecha": "2024-07-15"
+  "fecha": "2026-07-15"
 }
 
-### [ERROR 404] Actualizar ingreso con id inexistente   // check
+### [ERROR 404] Actualizar ingreso inexistente // check
 PUT http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -79,69 +105,79 @@ Content-Type: application/json
 }
 
 ### [OK] Eliminar un ingreso  // check
-DELETE http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
+DELETE http://localhost:1234/ingresos/35bf5d7c-df5d-4a7d-bbf5-5fae984e6773
+Authorization: Bearer {{token}}
 
-### [ERROR 404] Eliminar ingreso inexistente  // check
+### [ERROR 404] Eliminar ingreso inexistente // check
 DELETE http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 
-// Todo comprobado hasta aqui /  5/3/2026
+
 ######################## GASTOS ################################
 
 ### [OK] Recuperar todos los gastos // check
-GET http://localhost:1234/gastos
+GET http://localhost:1234/gastos  
+Authorization: Bearer {{token}}
 
-### [OK] Recuperar gastos por mes y año (marzo 2026)  // check
+### [OK] Recuperar gastos por mes y año // check
 GET http://localhost:1234/gastos/2026/3
+Authorization: Bearer {{token}}
 
-### [ERROR 404 ] Recuperar gastos de un mes sin datos //check
+### [ERROR 404] Recuperar gastos de un mes sin datos  // check
 GET http://localhost:1234/gastos/1800/1
+Authorization: Bearer {{token}}
 
 ### [OK] Recuperar gasto por id // check
-GET http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
+GET http://localhost:1234/gastos/4f696eeb-50f3-49b4-8552-4189b027e402
+Authorization: Bearer {{token}}
 
-### [ERROR 404] Recuperar gasto con id inexistente // check
+### [ERROR 404] Recuperar gasto con id inexistente
 GET http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 
-### [OK] Crear un gasto completo  // check
+### [OK] Crear un gasto completo
 POST http://localhost:1234/gastos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "concepto": "Supermercado",
   "cantidad": 85,
   "categoria": "Alimentación",
   "fecha": "2024-07-10"
 }
 
-### [ERROR 400] Crear gasto sin campos obligatorios  // check
+### [ERROR 400] Crear gasto sin campos obligatorios
 POST http://localhost:1234/gastos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "concepto": "Sin usuario ni cantidad"
 }
 
-### [ERROR 400] Crear gasto con body vacío  // check
+### [ERROR 400] Crear gasto con body vacío
 POST http://localhost:1234/gastos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {}
 
-### [OK] Actualizar un gasto  // check
+### [OK] Actualizar un gasto
 PUT http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "id_usuario": "54046b1e-b8be-11f0-bdfa-e0d55e61010f",
   "concepto": "Viaje Francia actualizado",
   "cantidad": 950,
   "categoria": "Ocio",
   "fecha": "2024-07-20"
 }
 
-### [ERROR 404] Actualizar gasto con id inexistente // check
+### [ERROR 404] Actualizar gasto con id inexistente
 PUT http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -151,129 +187,32 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### [OK] Eliminar un gasto  // check
+### [OK] Eliminar un gasto
 DELETE http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
+Authorization: Bearer {{token}}
 
-### [ERROR 404] Eliminar gasto inexistente  // check
+### [ERROR 404] Eliminar gasto inexistente
 DELETE http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
-
-### [OK] Recuperar categorías de gasto  // check
-GET http://localhost:1234/categorias/gasto  
-
-### [OK] Recuperar categorías de ingreso  // check
-GET http://localhost:1234/categorias/ingreso
-
-### [ERROR 404] Recuperar categorías de tipo inexistente
-GET http://localhost:1234/categorias/inventado
-
-
-######################## AUTH ################################
-
-### [OK] Registro de nuevo usuario
-POST http://localhost:1234/auth/register
-Content-Type: application/json
-
-{
-  "nickname": "jose_perez",
-  "gmail": "jose@example.com",
-  "pass": "Jose12345!"
-}
-
-### [ERROR 409] Registro con email duplicado  // check
-POST http://localhost:1234/auth/register
-Content-Type: application/json
-
-{
-  "nickname": "otro_nick",
-  "gmail": "ana@example.com",
-  "pass": "Test12345!"
-}
-
-### [ERROR 409] Registro con nickname duplicado // check
-POST http://localhost:1234/auth/register
-Content-Type: application/json
-
-{
-  "nickname": "ana_perez",
-  "gmail": "otro@example.com",
-  "pass": "Test12345!"
-}
-
-### [ERROR 400] Registro sin contraseña  // check
-POST http://localhost:1234/auth/register
-Content-Type: application/json
-
-{
-  "nickname": "nuevo_user",
-  "gmail": "nuevo@example.com"
-}
-
-### [ERROR 400] Registro con body vacío // check
-POST http://localhost:1234/auth/register
-Content-Type: application/json
-
-{}
-
-### [OK] Login correcto (copia el token de la respuesta) // check
-POST http://localhost:1234/auth/login
-Content-Type: application/json
-
-{
-  "email": "ana@example.com",
-  "password": "Ana12345!"
-}
-
-### [ERROR 401] Login con contraseña incorrecta // check
-POST http://localhost:1234/auth/login
-Content-Type: application/json
-
-{
-  "gmail": "ana@example.com",
-  "pass": "passwordMal"
-}
-
-### [ERROR 401] Login con email inexistente  // check
-POST http://localhost:1234/auth/login
-Content-Type: application/json
-
-{
-  "gmail": "noexiste@example.com",
-  "pass": "Test12345!"
-}
-
-### [ERROR 400] Login sin contraseña // check
-POST http://localhost:1234/auth/login
-Content-Type: application/json
-
-{
-  "gmail": "ana@example.com"
-}
-
-### [OK] Logout con token válido (pega aquí el token del login)  // check
-POST http://localhost:1234/auth/logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIzZjA4ZmM0LWU1NmYtNGI5Yy1iNGNiLTY3NTZhMGE3OTQyOSIsInRpcG8iOiJ1c3VhcmlvIiwibmlja25hbWUiOiJhbmFfcGVyZXoiLCJpYXQiOjE3NzE1MjQ2NDEsImV4cCI6MTc3MTYxMTA0MX0.n2ehyoXxbdqm5yqQn3fnbpW8ofNT7nuKuk7eGsBhhPI
-
-### [ERROR 401] Logout sin token
-POST http://localhost:1234/auth/logout
-
-### [ERROR 401] Logout con token mal formado
-POST http://localhost:1234/auth/logout
-Authorization: Bearer esto_no_es_un_token_valido
+Authorization: Bearer {{token}}
 
 
 ######################## USUARIOS ################################
 
 ### [OK] Recuperar todos los usuarios
 GET http://localhost:1234/usuarios
+Authorization: Bearer {{token}}
 
 ### [OK] Recuperar usuario por id
 GET http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+Authorization: Bearer {{token}}
 
 ### [ERROR 404] Recuperar usuario con id inexistente
 GET http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 
 ### [OK] Actualizar datos de un usuario
 PUT http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -283,14 +222,16 @@ Content-Type: application/json
 
 ### [ERROR 404] Actualizar usuario inexistente
 PUT http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "nickname": "fantasma"
 }
 
-### [ERROR 409] Actualizar con nickname ya en uso por otro usuario
+### [ERROR 409] Actualizar con nickname ya en uso
 PUT http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -299,6 +240,20 @@ Content-Type: application/json
 
 ### [OK] Eliminar un usuario
 DELETE http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+Authorization: Bearer {{token}}
 
 ### [ERROR 404] Eliminar usuario inexistente
 DELETE http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+
+######################## CATEGORIAS ################################
+
+### [OK] Recuperar categorías de gasto
+GET http://localhost:1234/categorias/gasto
+
+### [OK] Recuperar categorías de ingreso
+GET http://localhost:1234/categorias/ingreso
+
+### [ERROR 404] Recuperar categorías de tipo inexistente
+GET http://localhost:1234/categorias/inventado

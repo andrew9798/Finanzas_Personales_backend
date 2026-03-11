@@ -9,7 +9,7 @@ export default class userModel {
             `SELECT
                 id,
                 nickname,
-                gmail,
+                email,
                 tipo,
                 fecha_creacion,
                 ultimo_acceso
@@ -26,7 +26,7 @@ export default class userModel {
             `SELECT
                 id,
                 nickname,
-                gmail,
+                email,
                 tipo,
                 fecha_creacion,
                 ultimo_acceso
@@ -38,19 +38,19 @@ export default class userModel {
     }
 
     // Obtener usuario por email
-    static async getByEmail(gmail) {
+    static async getByEmail(email) {
         const [rows] = await connection.query(
             `SELECT
                 id,
                 nickname,
-                gmail,
+                email,
                 pass,
                 tipo,
                 fecha_creacion,
                 ultimo_acceso
             FROM usuarios
-            WHERE gmail = ?`,
-            [gmail]
+            WHERE email = ?`,
+            [email]
         );
         return rows[0];
     }
@@ -61,7 +61,7 @@ export default class userModel {
             `SELECT
                 id,
                 nickname,
-                gmail,
+                email,
                 tipo
             FROM usuarios
             WHERE nickname = ?`,
@@ -72,16 +72,16 @@ export default class userModel {
 
 // Crear nuevo usuario (registro)
 static async create(userData) {
-    const { nickname, gmail, pass, tipo = 'usuario' } = userData;
+    const { nickname, email, pass, tipo = 'usuario' } = userData;
 
     const id = randomUUID(); // ← generar UUID
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(pass, saltRounds);
 
     await connection.query(
-        `INSERT INTO usuarios (id, nickname, gmail, pass, tipo, fecha_creacion)
+        `INSERT INTO usuarios (id, nickname, email, pass, tipo, fecha_creacion)
         VALUES (?, ?, ?, ?, ?, NOW())`,
-        [id, nickname, gmail, hashedPassword, tipo] // ← id como primer parámetro
+        [id, nickname, email, hashedPassword, tipo] // ← id como primer parámetro
     );
 
     return id; // ← devolver el UUID, no result.insertId
@@ -94,13 +94,13 @@ static async create(userData) {
 
     // Actualizar información del usuario
     static async update(id, userData) {
-        const { nickname, gmail } = userData;
+        const { nickname, email } = userData;
         
         await connection.query(
             `UPDATE usuarios
-            SET nickname = ?, gmail = ?
+            SET nickname = ?, email = ?
             WHERE id = ?`,
-            [nickname, gmail, id]
+            [nickname, email, id]
         );
 
         return true;
@@ -142,10 +142,10 @@ static async create(userData) {
     }
 
     // Verificar si existe un email
-    static async emailExists(gmail) {
+    static async emailExists(email) {
         const [rows] = await connection.query(
-            `SELECT id FROM usuarios WHERE gmail = ?`,
-            [gmail]
+            `SELECT id FROM usuarios WHERE email = ?`,
+            [email]
         );
         return rows.length > 0;
     }
@@ -177,7 +177,7 @@ static async create(userData) {
     // Verifica que el token no haya expirado en BD (doble seguridad además del JWT)
     static async findByRefreshToken(userId, token) {
         const [rows] = await connection.query(
-            `SELECT u.id, u.nickname, u.gmail AS email, u.tipo
+            `SELECT u.id, u.nickname, u.email AS email, u.tipo
              FROM refresh_tokens rt
              JOIN usuarios u ON u.id = rt.id_usuario
              WHERE rt.id_usuario = ?
