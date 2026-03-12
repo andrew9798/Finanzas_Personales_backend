@@ -91,7 +91,7 @@ export default class AuthController {
         let passwordValido;
         try {
             passwordValido = user
-                ? await userModel.verifyPassword(password, user.pass)
+                ? await userModel.verifyPassword(password, user.password)
                 : false;
         } catch (error) {
             console.error('[AuthController.login] Error al verificar contraseña:', error);

@@ -7,8 +7,7 @@ export default class UserController {
     static async getAll(req, res) {
         try {
             // ✅ Corregido: req.tipo → req.user.tipo (viene del JWT decodificado en verifyToken)
-            const { tipo } = req.user;
-            const users = await userModel.getAll(tipo);
+            const users = await userModel.getAll();
             res.status(200).json(users);
         } catch (error) {
             console.error('[UserController.getAll]', error);
@@ -23,9 +22,9 @@ export default class UserController {
             const { id } = req.params;
 
             // ✅ Añadido: un usuario normal solo puede verse a sí mismo
-            if (tipo === 'usuario' && id !== requesterId.toString()) {
-                return res.status(403).json({ error: 'Acceso denegado' });
-            }
+            // if (tipo === 'usuario' && id !== requesterId.toString()) {
+            //     return res.status(403).json({ error: 'Acceso denegado' });
+            // }
 
             const user = await userModel.getById(id);
             if (!user) {
@@ -69,42 +68,69 @@ export default class UserController {
             const { tipo, id: requesterId } = req.user;
             const { id } = req.params;
 
-            // ✅ Añadido: un usuario solo puede editarse a sí mismo
-            if (tipo === 'usuario' && id !== requesterId.toString()) {
+            //✅ Añadido: solo admins pueden borrar otros usuarios
+            if (tipo !== 'admin' && id !== requesterId.toString()) {
                 return res.status(403).json({ error: 'Acceso denegado' });
             }
 
             const userData = req.body;
+            console.log('Datos recibidos para actualización:', userData);
 
-            // ✅ Añadido: evitar que un usuario se asigne su propio tipo (escalada de privilegios)
             if (tipo !== 'admin') {
                 delete userData.tipo;
             }
 
-            const updatedUser = { ...userData, id };
-            await userModel.update(updatedUser);
-            res.status(200).json(updatedUser);
+            await userModel.update(id, userData);
+
+            res.status(200).json({ ...userData, id });
+
         } catch (error) {
+
+            // Error de duplicado en MySQL  //ER_DUP_ENTRY -- código específico para detectar violación de UNIQUE
+            if (error.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({
+                    error: 'El email o nickname ya está en uso'
+                });
+            }
+
             console.error('[UserController.update]', error);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }
     }
 
     static async delete(req, res) {
-        try {
-            const { tipo, id: requesterId } = req.user;
-            const { id } = req.params;
+    try {
+        const { tipo, id: requesterId } = req.user;
+        const { id } = req.params;
 
-            // ✅ Añadido: solo admins pueden borrar otros usuarios
-            if (tipo !== 'admin' && id !== requesterId.toString()) {
-                return res.status(403).json({ error: 'Acceso denegado' });
-            }
+        console.log("tipo de usuario:", tipo);
 
-            await userModel.delete(id);
-            res.status(204).send();
-        } catch (error) {
-            console.error('[UserController.delete]', error);
-            return res.status(500).json({ error: 'Error interno del servidor' });
+        // 🔐 Control de permisos
+        if (tipo !== 'admin' && id !== requesterId.toString()) {
+            return res.status(403).json({
+                error: 'Acceso denegado'
+            });
         }
+
+        const deletedRows = await userModel.delete(id);
+        console.log("Filas eliminadas:", deletedRows);
+
+        // ❌ Usuario inexistente o ya eliminado
+        if (deletedRows === 0) {
+            return res.status(404).json({
+                error: 'El usuario no existe o ya ha sido eliminado'
+            });
+        }
+
+        // ✅ Eliminación correcta
+        return res.status(204).send();
+
+    } catch (error) {
+        console.error('[UserController.delete]', error);
+
+        return res.status(500).json({
+            error: 'Error interno del servidor'
+        });
     }
+}
 }

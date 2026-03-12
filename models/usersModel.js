@@ -4,7 +4,21 @@ import bcrypt from "bcrypt";
 
 export default class userModel {
     // Obtener todos los usuarios por tipo
-    static async getAll(tipo) {
+    static async getAll() {
+        const [rows] = await connection.query(
+            `SELECT
+                id,
+                nickname,
+                email,
+                tipo,
+                fecha_creacion,
+                ultimo_acceso
+            FROM usuarios`,
+        );
+        return rows;
+    }
+
+    static async getAllByType(tipo) {
         const [rows] = await connection.query(
             `SELECT
                 id,
@@ -44,7 +58,7 @@ export default class userModel {
                 id,
                 nickname,
                 email,
-                pass,
+                password,
                 tipo,
                 fecha_creacion,
                 ultimo_acceso
@@ -72,14 +86,14 @@ export default class userModel {
 
 // Crear nuevo usuario (registro)
 static async create(userData) {
-    const { nickname, email, pass, tipo = 'usuario' } = userData;
+    const { nickname, email, password, tipo = 'usuario' } = userData;
 
     const id = randomUUID(); // ← generar UUID
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(pass, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     await connection.query(
-        `INSERT INTO usuarios (id, nickname, email, pass, tipo, fecha_creacion)
+        `INSERT INTO usuarios (id, nickname, email, password, tipo, fecha_creacion)
         VALUES (?, ?, ?, ?, ?, NOW())`,
         [id, nickname, email, hashedPassword, tipo] // ← id como primer parámetro
     );
@@ -113,7 +127,7 @@ static async create(userData) {
 
         await connection.query(
             `UPDATE usuarios
-            SET pass = ?
+            SET password = ?
             WHERE id = ?`,
             [hashedPassword, id]
         );

@@ -1,19 +1,28 @@
 ######################## AUTH ################################
 
-### Login (ejecutar primero)
+### Login (ejecutar primero)    // check log cada 10 minutos para renovar token
 # @name login
 POST http://localhost:1234/auth/login
 Content-Type: application/json
 
 {
-  "email": "ana@example.com",
-  "password": "Ana12345!"
+"email": "nuevo_usuario@example.com",  "password": "Password123!"
 }
 
 ###
 
 @token = {{login.response.body.accessToken}}
 
+
+### [OK] register
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+  "nickname": "nuevo_usuario",
+  "email": "nuevo_usuario@example.com",
+  "password": "Password123!"
+}
 
 ######################## INGRESOS ################################
 
@@ -29,11 +38,11 @@ Authorization: Bearer {{token}}
 GET http://localhost:1234/ingresos/1800/1
 Authorization: Bearer {{token}}
 
-### [OK] Recuperar ingreso por id
+### [OK] Recuperar ingreso por id  // no patentado. 
 GET http://localhost:1234/ingresos/77351727-a4a7-45ce-b5af-0f8da614149f
 Authorization: Bearer {{token}}
 
-### [ERROR 404] Recuperar ingreso con id inexistente  // check
+### [ERROR 404] Recuperar ingreso con id inexistente  // no patentado
 GET http://localhost:1234/ingresos/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 
@@ -131,11 +140,11 @@ Authorization: Bearer {{token}}
 GET http://localhost:1234/gastos/4f696eeb-50f3-49b4-8552-4189b027e402
 Authorization: Bearer {{token}}
 
-### [ERROR 404] Recuperar gasto con id inexistente
+### [ERROR 404] Recuperar gasto con id inexistente  // check
 GET http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 
-### [OK] Crear un gasto completo
+### [OK] Crear un gasto completo  // check
 POST http://localhost:1234/gastos
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -147,7 +156,7 @@ Content-Type: application/json
   "fecha": "2024-07-10"
 }
 
-### [ERROR 400] Crear gasto sin campos obligatorios
+### [ERROR 400] Crear gasto sin campos obligatorios  // check
 POST http://localhost:1234/gastos
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -156,15 +165,15 @@ Content-Type: application/json
   "concepto": "Sin usuario ni cantidad"
 }
 
-### [ERROR 400] Crear gasto con body vacío
+### [ERROR 400] Crear gasto con body vacío  // check
 POST http://localhost:1234/gastos
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {}
 
-### [OK] Actualizar un gasto
-PUT http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
+### [OK] Actualizar un gasto // check
+PUT http://localhost:1234/gastos/4f696eeb-50f3-49b4-8552-4189b027e402
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -175,7 +184,7 @@ Content-Type: application/json
   "fecha": "2024-07-20"
 }
 
-### [ERROR 404] Actualizar gasto con id inexistente
+### [ERROR 404] Actualizar gasto con id inexistente  // check
 PUT http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -187,40 +196,40 @@ Content-Type: application/json
   "fecha": "2024-07-15"
 }
 
-### [OK] Eliminar un gasto
-DELETE http://localhost:1234/gastos/208c578f-a46f-4933-8207-26bb1942aa3a
+### [OK] Eliminar un gasto  // check
+DELETE http://localhost:1234/gastos/4f696eeb-50f3-49b4-8552-4189b027e402
 Authorization: Bearer {{token}}
 
-### [ERROR 404] Eliminar gasto inexistente
+### [ERROR 404] Eliminar gasto inexistente  // check
 DELETE http://localhost:1234/gastos/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 
 
 ######################## USUARIOS ################################
 
-### [OK] Recuperar todos los usuarios
+### [OK] Recuperar todos los usuarios  // check
 GET http://localhost:1234/usuarios
 Authorization: Bearer {{token}}
 
-### [OK] Recuperar usuario por id
-GET http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+### [OK] Recuperar usuario por id  // check
+GET http://localhost:1234/usuarios/37ec1eaf-7c65-4506-a452-c522b2bbb3ce
 Authorization: Bearer {{token}}
 
-### [ERROR 404] Recuperar usuario con id inexistente
+### [ERROR 404] Recuperar usuario con id inexistente  // check
 GET http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 
-### [OK] Actualizar datos de un usuario
-PUT http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+### [OK] Actualizar datos de un usuario  // check
+PUT http://localhost:1234/usuarios/23f08fc4-e56f-4b9c-b4cb-6756a0a79429
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "nickname": "ana_perez_editado",
-  "gmail": "ana_nueva@example.com"
+  "nickname": "ana garcia",
+  "email": "ana@example.com"
 }
 
-### [ERROR 404] Actualizar usuario inexistente
+### [ERROR 404] Actualizar usuario inexistente  //check
 PUT http://localhost:1234/usuarios/00000000-0000-0000-0000-000000000000
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -229,17 +238,18 @@ Content-Type: application/json
   "nickname": "fantasma"
 }
 
-### [ERROR 409] Actualizar con nickname ya en uso
-PUT http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+### [ERROR 409] Actualizar con nickname ya en uso //check
+PUT http://localhost:1234/usuarios/23f08fc4-e56f-4b9c-b4cb-6756a0a79429
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "nickname": "ana_perez"
+  "nickname": "Fernando alonso",
+  "email": "fernando@example.com"
 }
 
 ### [OK] Eliminar un usuario
-DELETE http://localhost:1234/usuarios/54046b1e-b8be-11f0-bdfa-e0d55e61010f
+DELETE http://localhost:1234/usuarios/23f08fc4-e56f-4b9c-b4cb-6756a0a79429
 Authorization: Bearer {{token}}
 
 ### [ERROR 404] Eliminar usuario inexistente
@@ -249,7 +259,7 @@ Authorization: Bearer {{token}}
 
 ######################## CATEGORIAS ################################
 
-### [OK] Recuperar categorías de gasto
+### [OK] Recuperar categorías de gasto // check
 GET http://localhost:1234/categorias/gasto
 
 ### [OK] Recuperar categorías de ingreso
