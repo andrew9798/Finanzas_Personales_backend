@@ -7,12 +7,14 @@ import { categoriasRouter } from './router/categoriasRouter.js';
 import { authRouter } from './router/AuthRouter.js';
 import { usersRouter } from './router/usersRouter.js';
 import { verifyToken } from './middelwares/auth.js';
+import cookieParser from 'cookie-parser';
 // import { authLimiter } from './middelwares/securityMiddleware.js';
 const app = express();
 
 // ─── Seguridad global ─────────────────────────────────────────────────────────
 app.use(securityHeaders);       // Helmet con todos los headers
 app.use(corsMiddleware);
+app.use(cookieParser());
 app.use(express.json());
 app.disable('x-powered-by');    // Helmet ya lo hace, pero no hace daño dejarlo
 

@@ -70,18 +70,20 @@ export default class AuthController {
     }
 
     static async login(req, res) {
+        
         // 1. Validaciones declarativas
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+        console.log('Login request body:', req.body); // Debug: Ver qué datos llegan al login
         const { email, password } = req.body;
 
         // 2. Buscar usuario en BD
         let user;
         try {
             user = await userModel.getByEmail(email);
+            console.log('Usuario encontrado en BD:', user); // Debug: Ver qué usuario se encontró
         } catch (error) {
             console.error('[AuthController.login] Error al buscar usuario en BD:', error);
             return res.status(500).json({ error: 'Error interno del servidor' });
@@ -124,6 +126,7 @@ export default class AuthController {
         try {
             accessToken = generateAccessToken(user);
             refreshToken = generateRefreshToken(user);
+            console.log('Tokens generados:', { accessToken, refreshToken }); // Debug: Ver tokens generados
         } catch (error) {
             console.error('[AuthController.login] Error al generar tokens JWT:', error);
             return res.status(500).json({ error: 'Error interno del servidor' });
@@ -195,7 +198,7 @@ export default class AuthController {
 
             return res.status(200).json({ accessToken: newAccessToken });
 
-        } catch (error) {
+        } catch (error) {ac
             console.error('[AuthController.refresh]', error);
             return res.status(500).json({ error: 'Error interno del servidor' });
         }

@@ -249,7 +249,7 @@ Content-Type: application/json
 }
 
 ### [OK] Eliminar un usuario
-DELETE http://localhost:1234/usuarios/23f08fc4-e56f-4b9c-b4cb-6756a0a79429
+DELETE http://localhost:1234/usuarios/c306003d-ea31-441c-9415-865702a2a15e
 Authorization: Bearer {{token}}
 
 ### [ERROR 404] Eliminar usuario inexistente
