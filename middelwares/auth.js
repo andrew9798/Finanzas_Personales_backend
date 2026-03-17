@@ -5,6 +5,7 @@ export const verifyToken = (req, res, next) => {
     // if (process.env.SKIP_AUTH === 'true') return next();
 
     const authHeader = req.headers.authorization;
+    console.log('Authorization header:', authHeader); // Debug: Ver qué Authorization header llega
 
     if (!authHeader) {
         return res.status(401).json({ error: 'Token requerido' });
