@@ -3,40 +3,47 @@ import TransaccionesModel from '../models/transaccionesModel.js';
 import { randomUUID } from 'crypto';
 
 export default class TransaccionesController {
+    
+    // 1. Solo obtiene las transacciones del usuario logueado
     static async getAll(req, res) {
         try {
             const tipo = req.tipo;
-            const transacciones = await TransaccionesModel.getAll(tipo);
+            const id_usuario = req.user.id; // 🚩 Seguridad: Filtro por usuario
+            
+            // Importante: Tu modelo debe aceptar el id_usuario ahora
+            const transacciones = await TransaccionesModel.getAll(tipo, id_usuario);
             res.status(200).json(transacciones);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
 
+    // 2. Filtra por fecha pero solo dentro de los datos del usuario
     static async getByMonthYear(req, res) {
         try {
             const tipo = req.tipo;
+            const id_usuario = req.user.id; // 🚩 Seguridad
             const { anyo, mes } = req.params;
-            const transacciones = await TransaccionesModel.getByMonthYear(tipo, anyo, mes);
-            if(transacciones.length === 0) {
-                res.status(404).json(transacciones);
-            }
-            else{
-                res.status(200).json(transacciones);
-            }  
+            
+            const transacciones = await TransaccionesModel.getByMonthYear(tipo, anyo, mes, id_usuario);
+            
+            res.status(200).json(transacciones);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
 
-    // NUEVA FUNCIÓN AÑADIDA: Obtener por ID
+    // 3. Verifica que la transacción solicitada pertenezca al usuario
     static async getById(req, res) {
         try {
             const { id } = req.params;
+            const id_usuario = req.user.id; // 🚩 Seguridad
             
             const transaccion = await TransaccionesModel.getById(id);
             
-            if (!transaccion) {
+            // Si no existe O no pertenece al usuario, damos un 404 (u 403)
+            // Es mejor dar un 404 para no confirmar que el ID existe a un atacante
+            if (!transaccion || transaccion.id_usuario !== id_usuario) {
                 return res.status(404).json({ error: 'Transacción no encontrada' });
             }
             
@@ -46,128 +53,96 @@ export default class TransaccionesController {
         }
     }
 
+    // 4. Crea la transacción vinculándola al ID real del token
     static async create(req, res) {
         try {
             const tipo = req.tipo;
-            console.log("userid en create;", req.user.id);
-            const id_usuario = "54046b1e-b8be-11f0-bdfa-e0d55e61010f"; // Valor fijo para pruebas
-            const transaccionData = req.body;
-            const quantity = req.body.cantidad;
-            if (quantity < 0) {
+            const id_usuario = req.user.id; // 🚩 Adiós al valor fijo de pruebas
+            
+            const { categoria, concepto, cantidad, fecha, ...restData } = req.body;
+            
+            if (cantidad < 0) {
                 return res.status(400).json({ error: "La cantidad no puede ser negativa" });
             }
-            const { categoria, ...restData } = transaccionData;
-            
-            // 1. Buscar el id_categoria si se envió una categoría
-            let id_categoria = null;
-            if (categoria) {
-                id_categoria = await TransaccionesModel.getCategoriaIdByNombre(categoria, tipo);
-                
-                if (!id_categoria) {
-                    return res.status(400).json({ 
-                        error: `La categoría "${categoria}" no existe para tipo "${tipo}"` 
-                    });
-                }
-            }
-            const {concepto, cantidad, fecha} = req.body;
+
             if (!concepto || !cantidad || !fecha || !categoria) {
-                return res.status(400).json({ error: "Faltan campos obligatorios: concepto, cantidad, fecha o categoria" });
+                return res.status(400).json({ error: "Faltan campos obligatorios" });
             }
+
+            const id_categoria = await TransaccionesModel.getCategoriaIdByNombre(categoria, tipo);
             
-            // 2. Crear la transacción con el id_categoria
+            if (!id_categoria) {
+                return res.status(400).json({ 
+                    error: `La categoría "${categoria}" no existe para tipo "${tipo}"` 
+                });
+            }
+
             const nuevaTransaccion = { 
                 ...restData, 
                 id: randomUUID(), 
                 tipo,
+                concepto,
+                cantidad,
+                fecha,
                 id_categoria,
-                id_usuario
+                id_usuario // 🚩 Vinculado al usuario real
             };
-            console.log("nueva transaccion a crear", nuevaTransaccion);
             
             await TransaccionesModel.create(nuevaTransaccion);
             
-            // 3. Devolver con el nombre de la categoría
-            res.status(201).json({
-                ...nuevaTransaccion,
-                categoria
-            });
+            res.status(201).json({ ...nuevaTransaccion, categoria });
             
         } catch (error) {
             res.status(500).json({ error: error.message });
-            console.log("req body en el error",req.body);
         }
     }
 
+    // 5. Solo permite actualizar si el usuario es el dueño
     static async update(req, res) {
         try {
-            console.log("datos de entrada", req.body);
             const { id } = req.params;
-            const tipo = req.params.body;
-           
-            const { categoria, ...restData } = req.body;
+            const id_usuario = req.user.id; // 🚩 Seguridad
+            const { categoria, concepto, cantidad, fecha } = req.body;
             
-            // 1. Verificar que la transacción existe
             const transaccionActual = await TransaccionesModel.getById(id);
             
-            if (!transaccionActual) {
+            // 🚩 Verificación de propiedad
+            if (!transaccionActual || transaccionActual.id_usuario !== id_usuario) {
                 return res.status(404).json({ error: 'Transacción no encontrada' });
             }
 
-            // 2. Validar campos obligatorios si se están actualizando
-            const {concepto, cantidad, fecha} = req.body;
             if (!concepto || !cantidad || !fecha || !categoria) {
-                return res.status(400).json({ error: "Faltan campos obligatorios: concepto, cantidad, fecha o categoria" });
+                return res.status(400).json({ error: "Faltan campos obligatorios" });
             }
             
-            // 3. Si viene 'categoria' (nombre), convertirlo a id_categoria
-            let datosParaActualizar = { ...restData };
-            // console.log("datos para actualizar", datosParaActualizar);
+            const id_categoria = await TransaccionesModel.getCategoriaIdByNombre(categoria, transaccionActual.tipo);
             
-
-            if (categoria) {
-                const id_categoria = await TransaccionesModel.getCategoriaIdByNombre(
-                    categoria, 
-                    transaccionActual.tipo // Usar el tipo de la transacción actual
-                );
-                
-                if (!id_categoria) {
-                    return res.status(400).json({ 
-                        error: `La categoría "${categoria}" no existe para tipo "${transaccionActual.tipo}"` 
-                    });
-                }
-                
-                datosParaActualizar.id_categoria = id_categoria;
-                // console.log("datos actualizados", datosParaActualizar);
+            if (!id_categoria) {
+                return res.status(400).json({ error: "Categoría no válida" });
             }
             
-            // 4. Si no hay nada que actualizar
-            if (Object.keys(datosParaActualizar).length === 0) {
-                return res.status(400).json({ error: 'No hay datos para actualizar' });
-            }
+            const datosParaActualizar = { concepto, cantidad, fecha, id_categoria };
             
-            // 5. Actualizar en BD
             await TransaccionesModel.update(id, datosParaActualizar);
-            console.log("actualizacion realizada");
             
-            // 6. Obtener transacción actualizada (con nombre de categoría)
-            const transaccionActualizada = await TransaccionesModel.getById(id);
-            
-            res.status(200).json(transaccionActualizada);
+            const actualizada = await TransaccionesModel.getById(id);
+            res.status(200).json(actualizada);
             
         } catch (error) {
             res.status(500).json({ error: error.message });
-            console.log("req body en el error",req.body);
         }
     }
 
+    // 6. Solo permite borrar si el usuario es el dueño
     static async delete(req, res) {
         try {
             const { id } = req.params;
+            const id_usuario = req.user.id; // 🚩 Seguridad
             
-            // Verificar que existe antes de eliminar
             const transaccion = await TransaccionesModel.getById(id);
             
-            if (!transaccion) {
+            // 🚩 Verificación de propiedad
+            if (!transaccion || transaccion.id_usuario !== id_usuario) {
                 return res.status(404).json({ error: 'Transacción no encontrada' });
             }
             

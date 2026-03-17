@@ -21,10 +21,10 @@ export default class UserController {
             const { tipo, id: requesterId } = req.user;
             const { id } = req.params;
 
-            // ✅ Añadido: un usuario normal solo puede verse a sí mismo
-            // if (tipo === 'usuario' && id !== requesterId.toString()) {
-            //     return res.status(403).json({ error: 'Acceso denegado' });
-            // }
+             //✅ Añadido: un usuario normal solo puede verse a sí mismo
+             if (tipo === 'usuario' && id !== requesterId.toString()) {
+                return res.status(403).json({ error: 'Acceso denegado' });
+             }
 
             const user = await userModel.getById(id);
             if (!user) {
