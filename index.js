@@ -16,7 +16,7 @@ app.use(corsMiddleware);
 app.use(securityHeaders);       // Helmet con todos los headers
 app.use(cookieParser());
 app.use(express.json());
-app.disable('x-powered-by');    // Helmet ya lo hace, pero no hace daño dejarlo
+app.disable('x-powered-by');
 
 // ─── Rutas de autenticación (con rate limiter específico) ─────────────────────
 app.use('/auth', authRouter);

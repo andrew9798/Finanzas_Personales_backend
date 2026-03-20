@@ -27,26 +27,40 @@ const COOKIE_OPTIONS = {
 
 export default class AuthController {
     static async register(req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-            const { nickname, email, password } = req.body;
-            const [emailExiste, nicknameExiste] = await Promise.all([
-                userModel.emailExists(email),
-                userModel.nicknameExists(nickname)
-            ]);
+        const { nickname, email, password } = req.body;
+        const [emailExiste, nicknameExiste] = await Promise.all([
+            userModel.emailExists(email),
+            userModel.nicknameExists(nickname)
+        ]);
 
-            if (emailExiste) return res.status(409).json({ error: 'El email ya está registrado' });
-            if (nicknameExiste) return res.status(409).json({ error: 'El nickname ya está en uso' });
+        if (emailExiste) return res.status(409).json({ error: 'El email ya está registrado' });
+        if (nicknameExiste) return res.status(409).json({ error: 'El nickname ya está en uso' });
 
-            const insertId = await userModel.create({ nickname, email, password });
-            return res.status(201).json({ message: 'Usuario registrado', id: insertId });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: 'Error interno' });
-        }
+        const insertId = await userModel.create({ nickname, email, password });
+
+        // 🚩 Auto-login: obtenemos el usuario recién creado y generamos tokens
+        const user = await userModel.getById(insertId);
+        await userModel.updateLastAccess(user.id);
+
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
+
+        await userModel.saveRefreshToken(user.id, refreshToken);
+        res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
+
+        return res.status(201).json({
+            accessToken,
+            user: { id: user.id, nickname: user.nickname, email: user.email, tipo: user.tipo }
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error interno' });
     }
+}
 
     static async login(req, res) {
         const { email, password } = req.body;
