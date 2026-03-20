@@ -12,8 +12,8 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 // ─── Seguridad global ─────────────────────────────────────────────────────────
-app.use(securityHeaders);       // Helmet con todos los headers
 app.use(corsMiddleware);
+app.use(securityHeaders);       // Helmet con todos los headers
 app.use(cookieParser());
 app.use(express.json());
 app.disable('x-powered-by');    // Helmet ya lo hace, pero no hace daño dejarlo

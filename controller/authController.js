@@ -19,10 +19,10 @@ const generateRefreshToken = (user) =>
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    path: '/', 
+    path: '/',
     secure: false, // Cambiar a true en producción con HTTPS
-    sameSite: 'lax', 
-    maxAge: 24 * 60 * 60 * 1000 
+    sameSite: 'lax', // Permite cookies en contextos cross-site (para desarrollo local)
+    maxAge: 24 * 60 * 60 * 1000
 };
 
 export default class AuthController {
@@ -75,15 +75,24 @@ export default class AuthController {
     }
 
     static async refresh(req, res) {
+        console.log('=== REFRESH DEBUG ===');
+        console.log('Cookie header RAW:', req.headers.cookie);
+        console.log('req.cookies:', req.cookies);
+        console.log('Origin:', req.headers.origin);
+        console.log('====================');
         try {
             const refreshToken = req.cookies?.refreshToken;
-            if (!refreshToken) return res.status(401).json({ error: 'Sin sesión' });
-
+            console.log("Intentando refrescar token con:", refreshToken);
+            if (!refreshToken) {
+                console.log("No se proporcionó token de refresco");
+                return res.status(401).json({ error: 'No se proporcionó token de refresco' });
+            }
             const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
             const user = await userModel.findByRefreshToken(decoded.id, refreshToken);
-            
+
             if (!user) {
                 res.clearCookie('refreshToken', COOKIE_OPTIONS);
+                console.log("session no valida para token:", refreshToken);
                 return res.status(401).json({ error: 'Sesión no válida' });
             }
 
@@ -94,12 +103,15 @@ export default class AuthController {
             res.cookie('refreshToken', newRefreshToken, COOKIE_OPTIONS);
 
             // 🚩 Corregido: Ahora devuelve también el objeto user
-            return res.status(200).json({ 
+            return res.status(200).json({
                 accessToken: newAccessToken,
                 user: { id: user.id, nickname: user.nickname, email: user.email, tipo: user.tipo }
             });
+            console.log('Refresh exitoso para usuario:', user.nickname);
         } catch (error) {
             return res.status(401).json({ error: 'Token expirado' });
+            console.log("token expirado:", refreshToken);
+
         }
     }
 
